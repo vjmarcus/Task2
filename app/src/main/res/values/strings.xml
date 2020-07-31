@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Task2</string>
+    <string name="playImageButton">playImageButton</string>
+    <string name="pauseImageButton">pauseImageButton</string>
+    <string name="stopImageButton">stopImageButton</string>
 </resources>
