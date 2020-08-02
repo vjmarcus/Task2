@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.ImageButton;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    //https://habr.com/ru/post/339416/
 //https://startandroid.ru/ru/uroki/vse-uroki-spiskom/161-urok-96-service-obratnaja-svjaz-s-pomoschju-broadcastreceiver.html
     private static final String TAG = "MyApp";
     public final static String BROADCAST_ACTION = "com.example.task2.broadcast";
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (task == 1) {
                     Log.d(TAG, "onReceive: WORKING!");
                 }
+
             }
         };
         // создаем фильтр для BroadcastReceiver
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // регистрируем (включаем) BroadcastReceiver
         registerReceiver(broadcastReceiver, intentFilter);
     }
+
 
     private void setOnClickListener() {
         playImageButton.setOnClickListener(this);
@@ -67,12 +70,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         switch (view.getId()) {
             case R.id.playImageButton:
-                Intent intent = new Intent(this, MusicService.class).
-                        putExtra("task", 1);
-                startService(intent);
+                startService(new Intent(this, MusicService.class));
                 break;
             case R.id.pauseImageButton:
-
+                Intent intent = new Intent(this, MusicService.class).
+                        putExtra("task", 1);
+                sendBroadcast(intent);
                 break;
             case R.id.stopImageButton:
 
