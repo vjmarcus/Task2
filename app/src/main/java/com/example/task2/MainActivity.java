@@ -1,16 +1,30 @@
 package com.example.task2;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.JobIntentService;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.IntentSender;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
+//https://startandroid.ru/ru/uroki/vse-uroki-spiskom/161-urok-96-service-obratnaja-svjaz-s-pomoschju-broadcastreceiver.html
+    private static final String TAG = "MyApp";
+    public final static String BROADCAST_ACTION = "com.example.task2.broadcast";
     private ImageButton playImageButton;
     private ImageButton pauseImageButton;
     private ImageButton stopImageButton;
+    private MediaPlayer mediaPlayer;
+    private Boolean isPlayed;
+    private BroadcastReceiver broadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +33,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         init();
         setOnClickListener();
         getResources().openRawResource(R.raw.intergalactic);
+        isPlayed = false;
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int task = intent.getIntExtra("task", 0);
+                Log.d(TAG, "onReceive: = " + task);
+                if (task == 1) {
+                    Log.d(TAG, "onReceive: WORKING!");
+                }
+            }
+        };
+        // создаем фильтр для BroadcastReceiver
+        IntentFilter intentFilter = new IntentFilter(BROADCAST_ACTION);
+        // регистрируем (включаем) BroadcastReceiver
+        registerReceiver(broadcastReceiver, intentFilter);
     }
 
     private void setOnClickListener() {
@@ -35,14 +64,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+
         switch (view.getId()) {
             case R.id.playImageButton:
+                Intent intent = new Intent(this, MusicService.class).
+                        putExtra("task", 1);
+                startService(intent);
                 break;
             case R.id.pauseImageButton:
+
                 break;
             case R.id.stopImageButton:
+
                 break;
 
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
     }
 }

@@ -3,4 +3,7 @@
     <string name="playImageButton">playImageButton</string>
     <string name="pauseImageButton">pauseImageButton</string>
     <string name="stopImageButton">stopImageButton</string>
+    <string name="song_name">Название песни</string>
+    <string name="author">Автор</string>
+    <string name="genre">Жанр</string>
 </resources>

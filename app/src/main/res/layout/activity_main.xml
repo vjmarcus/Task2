@@ -44,8 +44,10 @@
         android:id="@+id/TitleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size"
         app:layout_constraintBottom_toTopOf="@+id/authorTextView"
         app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/song_name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -53,12 +55,17 @@
         android:id="@+id/authorTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size"
+        android:text="@string/author"
         app:layout_constraintBottom_toTopOf="@+id/genreTextView"
         app:layout_constraintStart_toStartOf="@+id/TitleTextView"
         app:layout_constraintTop_toBottomOf="@+id/TitleTextView" />
 
     <TextView
         android:id="@+id/genreTextView"
+        android:text="@string/genre"
+        android:textSize="@dimen/text_size"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
