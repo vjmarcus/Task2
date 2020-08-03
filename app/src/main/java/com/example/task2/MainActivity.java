@@ -36,34 +36,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         init();
         setOnClickListener();
         loadFromSharedPref();
-        if (wasPlayed) {
-            resumePlayMusic();
-        }
         DataBaseHandler dataBaseHandler = new DataBaseHandler(this);
-        dataBaseHandler.addSong(new Song("Плачу на техно", "Cream Soda feat. ХЛЕБ",
-                "dance",  "android.resource://" + getPackageName() + "/" + R.raw.intergalactic));
-        dataBaseHandler.addSong(new Song("Hypnodancer", " Little Big", "dance",
-                "android.resource://" + getPackageName() + "/" + R.raw.intergalactic));
-        dataBaseHandler.addSong(new Song("Lovefool", "twocolors", "dance",
-                "android.resource://" + getPackageName() + "/" + R.raw.intergalactic));
-        dataBaseHandler.addSong(new Song("Shut Up Chicken", "El Capon", "Хип-хоп",
-                "android.resource://" + getPackageName() + "/" + R.raw.intergalactic));
-        dataBaseHandler.addSong(new Song("Relax", "Junona Boys", "Хип-хоп",
-                "android.resource://" + getPackageName() + "/" + R.raw.intergalactic));
-        dataBaseHandler.addSong(new Song("Fly 2", "Zivert feat. NILETTO", "Хип-хоп",
-                "android.resource://" + getPackageName() + "/" + R.raw.intergalactic));
-        dataBaseHandler.addSong(new Song("Breaking Me", "Topic feat. A7S", "Евродэнс",
-                "android.resource://" + getPackageName() + "/" + R.raw.intergalactic));
-        dataBaseHandler.addSong(new Song("Луна не знает пути", "Тайпан feat. Agunda", "Евродэнс",
-                "android.resource://" + getPackageName() + "/" + R.raw.intergalactic));
-        dataBaseHandler.addSong(new Song("Me Provocas", "Dynoro feat. Fumaratto", "Евродэнс",
-                "android.resource://" + getPackageName() + "/" + R.raw.intergalactic));
-        dataBaseHandler.addSong(new Song("Двигаться", "G RaiM ", "Евродэнс",
-                "android.resource://" + getPackageName() + "/" + R.raw.intergalactic));
-        List<Song> songs = dataBaseHandler.getAllSongs();
-        for (int i = 0; i < songs.size(); i++) {
-            Log.d(TAG, "onCreate: = " + songs.get(i).toString());
-        }
+//        dataBaseHandler.deleteDatabase(this);
+//        dataBaseHandler.addSong(new Song("Плачу на техно", "Cream Soda feat. ХЛЕБ",
+//                "dance",  "android.resource://" + getPackageName() + "/" + R.raw.creamsoda));
+//        dataBaseHandler.addSong(new Song("Hypnodancer", " Little Big", "dance",
+//                "android.resource://" + getPackageName() + "/" + R.raw.littlebig));
+//        dataBaseHandler.addSong(new Song("Lovefool", "twocolors", "dance",
+//                "android.resource://" + getPackageName() + "/" + R.raw.twocolors));
+//        dataBaseHandler.addSong(new Song("Shut Up Chicken", "El Capon", "Хип-хоп",
+//                "android.resource://" + getPackageName() + "/" + R.raw.elcapon));
+//        dataBaseHandler.addSong(new Song("Relax", "Junona Boys", "Хип-хоп",
+//                "android.resource://" + getPackageName() + "/" + R.raw.junonaboys));
+//        dataBaseHandler.addSong(new Song("Fly 2", "Zivert feat. NILETTO", "Хип-хоп",
+//                "android.resource://" + getPackageName() + "/" + R.raw.zivert));
+//        dataBaseHandler.addSong(new Song("Breaking Me", "Topic feat. A7S", "Евродэнс",
+//                "android.resource://" + getPackageName() + "/" + R.raw.topic));
+//        dataBaseHandler.addSong(new Song("Луна не знает пути", "Тайпан feat. Agunda", "Евродэнс",
+//                "android.resource://" + getPackageName() + "/" + R.raw.taypan_gunda));
+//        dataBaseHandler.addSong(new Song("Me Provocas", "Dynoro feat. Fumaratto", "Евродэнс",
+//                "android.resource://" + getPackageName() + "/" + R.raw.dynoro));
+//        dataBaseHandler.addSong(new Song("Двигаться", "G RaiM ", "Евродэнс",
+//                "android.resource://" + getPackageName() + "/" + R.raw.raim));
+//        List<Song> songs = dataBaseHandler.getAllSongs();
+//        for (int i = 0; i < songs.size(); i++) {
+//            Log.d(TAG, "onCreate: = " + songs.get(i).toString());
+//        }
     }
 
     private void resumePlayMusic() {

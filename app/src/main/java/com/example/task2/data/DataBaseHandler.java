@@ -28,8 +28,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 Util.KEY_ID + " INTEGER PRIMARY KEY,"
                 + Util.KEY_TITLE + " TEXT,"
                 + Util.KEY_AUTHOR + " TEXT,"
-                + Util.KEY_GENRE + " TEXT);");
+                + Util.KEY_GENRE + " TEXT"
+                + Util.KEY_FILE_PATH + " "  + ")");
     }
+    //
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
@@ -43,6 +45,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         contentValues.put(Util.KEY_TITLE, song.getTitle());
         contentValues.put(Util.KEY_AUTHOR, song.getAuthor());
         contentValues.put(Util.KEY_GENRE, song.getGenre());
+        // TODO put PATH
         db.insert(Util.TABLE_NAME, null, contentValues);
         db.close();
     }
@@ -50,12 +53,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public Song getSong(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.query(Util.TABLE_NAME, new String[]{Util.KEY_ID, Util.KEY_TITLE,
-                        Util.KEY_AUTHOR, Util.KEY_GENRE}, Util.KEY_ID + "=?",
+                        Util.KEY_AUTHOR, Util.KEY_GENRE, Util.KEY_FILE_PATH}, Util.KEY_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
-        Song song = new Song(Integer.parseInt(cursor.getString(0)), cursor.getString(1),
-                cursor.getString(2), cursor.getString(3));
+        Song song = new Song(cursor.getString(0), cursor.getString(1), cursor.getString(2),
+                cursor.getString(3));
         return song;
     }
 
@@ -70,12 +73,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 song.setTitle(cursor.getString(1));
                 song.setAuthor(cursor.getString(2));
                 song.setGenre(cursor.getString(3));
+                song.setPathToFile(cursor.getString(4));
                 songs.add(song);
             } while (cursor.moveToNext());
         }
         cursor.close();
         return songs;
     }
-
-
+    public static void deleteDatabase(Context context) {
+        context.deleteDatabase(Util.TABLE_NAME);
+    }
 }
