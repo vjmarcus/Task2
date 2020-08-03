@@ -5,21 +5,32 @@ public class Song {
     private String title;
     private String author;
     private String genre;
+    private String pathToFile;
 
     public Song() {
     }
 
-    public Song(int id, String title, String author, String genre) {
+    public Song(String title, String author, String genre, String pathToFile) {
+        this.title = title;
+        this.author = author;
+        this.genre = genre;
+        this.pathToFile = pathToFile;
+    }
+
+    public Song(int id, String title, String author, String genre, String pathToFile) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.genre = genre;
+        this.pathToFile = pathToFile;
     }
 
-    public Song(String title, String author, String genre) {
-        this.title = title;
-        this.author = author;
-        this.genre = genre;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -46,21 +57,11 @@ public class Song {
         this.genre = genre;
     }
 
-    public int getId() {
-        return id;
+    public String getPathToFile() {
+        return pathToFile;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "Song{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", author='" + author + '\'' +
-                ", genre='" + genre + '\'' +
-                '}';
+    public void setPathToFile(String pathToFile) {
+        this.pathToFile = pathToFile;
     }
 }

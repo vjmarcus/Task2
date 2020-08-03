@@ -40,16 +40,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             resumePlayMusic();
         }
         DataBaseHandler dataBaseHandler = new DataBaseHandler(this);
-//        dataBaseHandler.addSong(new Song("TWOCOLORS", "Lovefool", "dance"));
-//        dataBaseHandler.addSong(new Song("ZIVERT/NILETTO", "FLy 2", "dance"));
-//        dataBaseHandler.addSong(new Song("DABRO", "Юность", "dance"));
-//        dataBaseHandler.addSong(new Song("TOPIC/A7S", "Breaking Me", "Хип-хоп"));
-//        dataBaseHandler.addSong(new Song("ДЖАРО/ХАНЗА", "Таблетка", "Хип-хоп"));
-//        dataBaseHandler.addSong(new Song("BLACK EYED PEAS", "Mamacita", "Хип-хоп"));
-//        dataBaseHandler.addSong(new Song("DYNORO/FUMARATTO", "Me Provocas", "Евродэнс"));
-//        dataBaseHandler.addSong(new Song("SOFI TUKKER", "House Arrest", "Евродэнс"));
-//        dataBaseHandler.addSong(new Song("КЛАВА КОКА/NILETTO", "Краш", "Евродэнс"));
-//        dataBaseHandler.addSong(new Song("ARNON/JONISA", "G Paradis", "Евродэнс"));
+        dataBaseHandler.addSong(new Song("Плачу на техно", "Cream Soda feat. ХЛЕБ", "dance"));
+        dataBaseHandler.addSong(new Song("Hypnodancer", " Little Big", "dance"));
+        dataBaseHandler.addSong(new Song("Lovefool", "twocolors", "dance"));
+        dataBaseHandler.addSong(new Song("Shut Up Chicken", "El Capon", "Хип-хоп"));
+        dataBaseHandler.addSong(new Song("Relax", "Junona Boys", "Хип-хоп"));
+        dataBaseHandler.addSong(new Song("Fly 2", "Zivert feat. NILETTO", "Хип-хоп"));
+        dataBaseHandler.addSong(new Song("Breaking Me", "Topic feat. A7S", "Евродэнс"));
+        dataBaseHandler.addSong(new Song("Луна не знает пути", "Тайпан feat. Agunda", "Евродэнс"));
+        dataBaseHandler.addSong(new Song("Me Provocas", "Dynoro feat. Fumaratto", "Евродэнс"));
+        dataBaseHandler.addSong(new Song("Двигаться", "G RaiM ", "Евродэнс"));
         List<Song> songs = dataBaseHandler.getAllSongs();
         for (int i = 0; i < songs.size(); i++) {
             Log.d(TAG, "onCreate: = " + songs.get(i).toString());
