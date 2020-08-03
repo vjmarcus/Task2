@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         init();
         setOnClickListener();
         loadFromSharedPref();
+        if (wasPlayed) {
+            resumePlayMusic();
+        }
         DataBaseHandler dataBaseHandler = new DataBaseHandler(this);
 //        dataBaseHandler.deleteDatabase(this);
 //        dataBaseHandler.addSong(new Song("Плачу на техно", "Cream Soda feat. ХЛЕБ",

@@ -30,7 +30,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public void onCreate() {
         super.onCreate();
-        mediaPlayer = MediaPlayer.create(this, R.raw.intergalactic);
+        mediaPlayer = MediaPlayer.create(this, R.raw.littlebig);
         mediaPlayer.setLooping(false);
     }
 
@@ -38,7 +38,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public int onStartCommand(Intent intent, int flags, int startId) {
             if (intent.getAction().equals(ACTION_PLAY)) {
                 Log.d(TAG, "onStartCommand: " + "ACTION_PLAY");
-                mediaPlayer = MediaPlayer.create(this, R.raw.intergalactic);
+                mediaPlayer = MediaPlayer.create(this, R.raw.littlebig);
                 mediaPlayer.seekTo(position);
                 mediaPlayer.start();
             } else if (intent.getAction().equals(ACTION_PAUSE)) {
