@@ -7,10 +7,12 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.util.Log;
 
-public class MusicService extends Service {
+public class MusicService extends Service implements MediaPlayer.OnPreparedListener {
+    public static final String ACTION_PLAY = "com.example.action.PLAY";
+    public static final String ACTION_PAUSE = "com.example.action.PAUSE";
     public static final String TAG = "MyApp";
-
-    private MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayer = null;
+    private int position = 0;
 
     public MusicService() {
     }
@@ -30,14 +32,28 @@ public class MusicService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-        return super.onStartCommand(intent, flags, startId);
+            if (intent.getAction().equals(ACTION_PLAY)) {
+                Log.d(TAG, "onStartCommand: " + "ACTION_PLAY");
+                mediaPlayer = MediaPlayer.create(this, R.raw.intergalactic);
+                mediaPlayer.seekTo(position);
+                mediaPlayer.start();
+            } else if (intent.getAction().equals(ACTION_PAUSE)) {
+                Log.d(TAG, "onStartCommand: " + "ACTION_PAUSE");
+                mediaPlayer.pause();
+                position = mediaPlayer.getCurrentPosition();
+            }
+        return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        mediaPlayer.stop();
+        if (mediaPlayer != null) mediaPlayer.stop();
         Log.d(TAG, "onDestroy: stop");
+    }
+
+    @Override
+    public void onPrepared(MediaPlayer mediaPlayer) {
+        mediaPlayer.start();
     }
 }
 

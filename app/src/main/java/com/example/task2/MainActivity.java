@@ -16,16 +16,11 @@ import android.view.View;
 import android.widget.ImageButton;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    //https://habr.com/ru/post/339416/
-//https://startandroid.ru/ru/uroki/vse-uroki-spiskom/161-urok-96-service-obratnaja-svjaz-s-pomoschju-broadcastreceiver.html
+
     private static final String TAG = "MyApp";
-    public final static String BROADCAST_ACTION = "com.example.task2.broadcast";
     private ImageButton playImageButton;
     private ImageButton pauseImageButton;
     private ImageButton stopImageButton;
-    private MediaPlayer mediaPlayer;
-    private Boolean isPlayed;
-    private BroadcastReceiver broadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,25 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         init();
         setOnClickListener();
-        getResources().openRawResource(R.raw.intergalactic);
-        isPlayed = false;
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                int task = intent.getIntExtra("task", 0);
-                Log.d(TAG, "onReceive: = " + task);
-                if (task == 1) {
-                    Log.d(TAG, "onReceive: WORKING!");
-                }
-
-            }
-        };
-        // создаем фильтр для BroadcastReceiver
-        IntentFilter intentFilter = new IntentFilter(BROADCAST_ACTION);
-        // регистрируем (включаем) BroadcastReceiver
-        registerReceiver(broadcastReceiver, intentFilter);
     }
-
 
     private void setOnClickListener() {
         playImageButton.setOnClickListener(this);
@@ -67,26 +44,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-
         switch (view.getId()) {
             case R.id.playImageButton:
-                startService(new Intent(this, MusicService.class));
+                Log.d(TAG, "onClick: play button");
+                startService(new Intent(this, MusicService.class)
+                        .setAction(MusicService.ACTION_PLAY));
                 break;
             case R.id.pauseImageButton:
-                Intent intent = new Intent(this, MusicService.class).
-                        putExtra("task", 1);
-                sendBroadcast(intent);
+                Log.d(TAG, "onClick: pause button");
+                startService(new Intent(this, MusicService.class)
+                        .setAction(MusicService.ACTION_PAUSE));
                 break;
             case R.id.stopImageButton:
-
+                Log.d(TAG, "onClick: stop button");
+                stopService(new Intent(this, MusicService.class));
                 break;
-
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(broadcastReceiver);
     }
 }
