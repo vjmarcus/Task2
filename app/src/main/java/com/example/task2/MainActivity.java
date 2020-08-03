@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -18,6 +19,7 @@ import android.widget.ImageButton;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "MyApp";
+    private static final String WAS_PLAYED = "was_played";
     private ImageButton playImageButton;
     private ImageButton pauseImageButton;
     private ImageButton stopImageButton;
@@ -73,5 +75,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopService(new Intent(this, MusicService.class));
+        saveToSharedPref();
+    }
+
+    private void saveToSharedPref() {
+        SharedPreferences sharedPref = getApplicationContext()
+                .getSharedPreferences(WAS_PLAYED, 0);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(WAS_PLAYED, isPlay);
+        editor.apply();
+        Log.d(TAG, "saveToSharedPref main: = " + isPlay);
     }
 }

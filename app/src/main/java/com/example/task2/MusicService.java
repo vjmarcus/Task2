@@ -1,7 +1,9 @@
 package com.example.task2;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -10,6 +12,8 @@ import android.util.Log;
 public class MusicService extends Service implements MediaPlayer.OnPreparedListener {
     public static final String ACTION_PLAY = "com.example.action.PLAY";
     public static final String ACTION_PAUSE = "com.example.action.PAUSE";
+    public static final String SONG_POSITION = "song_position";
+    public static final String SHARED_PREF = "shared_pref";
     public static final String TAG = "MyApp";
     private MediaPlayer mediaPlayer = null;
     private int position = 0;
@@ -49,11 +53,22 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void onDestroy() {
         if (mediaPlayer != null) mediaPlayer.stop();
         Log.d(TAG, "onDestroy: stop");
+        position = mediaPlayer.getCurrentPosition();
+        saveToSharedPref();
     }
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
         mediaPlayer.start();
+    }
+
+    private void saveToSharedPref() {
+        SharedPreferences sharedPref = getApplicationContext()
+                .getSharedPreferences(SHARED_PREF, 0);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(SONG_POSITION, position);
+        editor.apply();
+        Log.d(TAG, "saveToSharedPref: = " + position);
     }
 }
 
