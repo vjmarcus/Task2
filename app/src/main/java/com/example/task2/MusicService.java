@@ -6,14 +6,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.util.Log;
 
 public class MusicService extends Service implements MediaPlayer.OnPreparedListener {
     public static final String ACTION_PLAY = "com.example.action.PLAY";
     public static final String ACTION_PAUSE = "com.example.action.PAUSE";
-    public static final String SONG_POSITION = "song_position";
-    public static final String SHARED_PREF = "shared_pref";
+    public static final String ACTION_RESUME = "com.example.action.RESUME";
+    public static final String APP_PREFERENCES = "APP_PREFERENCES";
+    public static final String APP_PREFERENCES_POSITION = "APP_PREFERENCES_POSITION";
     public static final String TAG = "MyApp";
     private MediaPlayer mediaPlayer = null;
     private int position = 0;
@@ -45,6 +45,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                 Log.d(TAG, "onStartCommand: " + "ACTION_PAUSE");
                 mediaPlayer.pause();
                 position = mediaPlayer.getCurrentPosition();
+            } else if (intent.getAction().equals(ACTION_RESUME)) {
+                Log.d(TAG, "onStartCommand: " + "ACTION_RESUME");
+                loadFromSharedPref();
+                mediaPlayer.seekTo(position);
+                mediaPlayer.start();
             }
         return START_STICKY;
     }
@@ -63,12 +68,16 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     private void saveToSharedPref() {
-        SharedPreferences sharedPref = getApplicationContext()
-                .getSharedPreferences(SHARED_PREF, 0);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(SONG_POSITION, position);
+        SharedPreferences sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(APP_PREFERENCES_POSITION, position);
         editor.apply();
         Log.d(TAG, "saveToSharedPref: = " + position);
+    }
+    private void loadFromSharedPref() {
+        SharedPreferences sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        position = sharedPreferences.getInt(APP_PREFERENCES_POSITION, 0 );
+        Log.d(TAG, "loadFromSharedPref: = " + position);
     }
 }
 
