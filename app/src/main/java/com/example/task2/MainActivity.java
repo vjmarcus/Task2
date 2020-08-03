@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageButton playImageButton;
     private ImageButton pauseImageButton;
     private ImageButton stopImageButton;
+    private boolean isPlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,18 +47,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.playImageButton:
-                Log.d(TAG, "onClick: play button");
-                startService(new Intent(this, MusicService.class)
-                        .setAction(MusicService.ACTION_PLAY));
+                if (!isPlay) {
+                    Log.d(TAG, "onClick: play button");
+                    startService(new Intent(this, MusicService.class)
+                            .setAction(MusicService.ACTION_PLAY));
+                    isPlay = true;
+                }
                 break;
             case R.id.pauseImageButton:
-                Log.d(TAG, "onClick: pause button");
-                startService(new Intent(this, MusicService.class)
-                        .setAction(MusicService.ACTION_PAUSE));
+                if (isPlay) {
+                    Log.d(TAG, "onClick: pause button");
+                    startService(new Intent(this, MusicService.class)
+                            .setAction(MusicService.ACTION_PAUSE));
+                    isPlay = false;
+                }
                 break;
             case R.id.stopImageButton:
                 Log.d(TAG, "onClick: stop button");
                 stopService(new Intent(this, MusicService.class));
+                isPlay = false;
                 break;
         }
     }
