@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dbHelper = new SongsDbHelper(this);
         database = dbHelper.getWritableDatabase();
 
-        addSongToDb();
+//        addSongToDb();
 //        loadSongFromDb();
         loadFromContentResolver();
 
@@ -60,43 +60,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             resumePlayMusic();
         }
         printSounds();
-//        DataBaseHandler dataBaseHandler = new DataBaseHandler(this);
-//        dataBaseHandler.deleteDatabase(this);
-//        dataBaseHandler.addSong(new Song("Плачу на техно", "Cream Soda feat. ХЛЕБ",
-//                "dance",  "android.resource://" + getPackageName() + "/" + R.raw.creamsoda));
-//        dataBaseHandler.addSong(new Song("Hypnodancer", " Little Big", "dance",
-//                "android.resource://" + getPackageName() + "/" + R.raw.littlebig));
-//        dataBaseHandler.addSong(new Song("Lovefool", "twocolors", "dance",
-//                "android.resource://" + getPackageName() + "/" + R.raw.twocolors));
-//        dataBaseHandler.addSong(new Song("Shut Up Chicken", "El Capon", "Хип-хоп",
-//                "android.resource://" + getPackageName() + "/" + R.raw.elcapon));
-//        dataBaseHandler.addSong(new Song("Relax", "Junona Boys", "Хип-хоп",
-//                "android.resource://" + getPackageName() + "/" + R.raw.junonaboys));
-//        dataBaseHandler.addSong(new Song("Fly 2", "Zivert feat. NILETTO", "Хип-хоп",
-//                "android.resource://" + getPackageName() + "/" + R.raw.zivert));
-//        dataBaseHandler.addSong(new Song("Breaking Me", "Topic feat. A7S", "Евродэнс",
-//                "android.resource://" + getPackageName() + "/" + R.raw.topic));
-//        dataBaseHandler.addSong(new Song("Луна не знает пути", "Тайпан feat. Agunda", "Евродэнс",
-//                "android.resource://" + getPackageName() + "/" + R.raw.taypan_gunda));
-//        dataBaseHandler.addSong(new Song("Me Provocas", "Dynoro feat. Fumaratto", "Евродэнс",
-//                "android.resource://" + getPackageName() + "/" + R.raw.dynoro));
-//        dataBaseHandler.addSong(new Song("Двигаться", "G RaiM ", "Евродэнс",
-//                "android.resource://" + getPackageName() + "/" + R.raw.raim));
-//        List<Song> songs = dataBaseHandler.getAllSongs();
-//        for (int i = 0; i < songs.size(); i++) {
-//            Log.d(TAG, "onCreate: = " + songs.get(i).toString());
-//        }
     }
     private void printSounds() {
         for (int i = 0; i < songs.size(); i++) {
             Log.d(TAG, "printSounds: " + songs.get(i).getPathToFile());
         }
+//        addSongToDb(song = new Song("Двигаться", "Raim", "Молодежная",
+//                Uri.parse("android.resource://" + getPackageName() + "/raw/raim").toString()));
+//        addSongToDb(song = new Song("MAMACITA", "Black Eyed Peas", "Танцевальная",
+//                Uri.parse("android.resource://" + getPackageName() + "/raw/mamasita").toString()));
+//        addSongToDb(song = new Song("HYPNODANCER", "LITTLE BIG - HYPNODANCER", "Танцевальная",
+//                Uri.parse("android.resource://" + getPackageName() + "/raw/littlebig").toString()));
+//        addSongToDb(song = new Song("Lovefool", "twocolors", "Танцевальная",
+//                Uri.parse("android.resource://" + getPackageName() + "/raw/twocolors").toString()));
+//        addSongToDb(song = new Song("El Capon", "El Capon", "Танцевальная",
+//                Uri.parse("android.resource://" + getPackageName() + "/raw/elcapon").toString()));
+//        addSongToDb(song = new Song("Relax", "Junona Boys", "Танцевальная",
+//                Uri.parse("android.resource://" + getPackageName() + "/raw/junonaboys").toString()));
+//        addSongToDb(song = new Song("Fly 2", ". Zivert x NILETTO", "Молодежная",
+//                Uri.parse("android.resource://" + getPackageName() + "/raw/zivert").toString()));
+//        addSongToDb(song = new Song("Topic A7S", "Breaking Me ft. A7", "Молодежная",
+//                Uri.parse("android.resource://" + getPackageName() + "/raw/topic").toString()));
+//        addSongToDb(song = new Song("Луна не знает пути", "ТАЙПАН & Agunda", "Молодежная",
+//                Uri.parse("android.resource://" + getPackageName() + "/raw/taypan_gunda").toString()));
+//        addSongToDb(song = new Song("Dynoro & Fumaratto", "Me Provocas", "Танцевальная",
+//                Uri.parse("android.resource://" + getPackageName() + "/raw/dynoro").toString()));
+//        addSongToDb(song = new Song("G Paradise", " Arnon Ft. Jonisa", "Танцевальная",
+//                Uri.parse("android.resource://" + getPackageName() + "/raw/paradise").toString()));
     }
 
-    private void addSongToDb() {
-        song = new Song("asdfsdf", "asdfsdff", "Танцевальная",
-                Uri.parse("android.resource://" + getPackageName() + "/raw/raim").toString());
-        songs.add(song);
+
+    private void addSongToDb(Song song) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(SongContract.SongsEntry.COLUMN_TITLE, song.getTitle());
         contentValues.put(SongContract.SongsEntry.COLUMN_AUTHOR, song.getAuthor());

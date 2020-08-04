@@ -7,7 +7,7 @@ public class SongsDb {
 
     private static final String TAG = "MyApp";
     private static final String DB_NAME = "songsDB";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
     private static final String SONG_TABLE = "songs";
     private static final String SONG_ID = "_id";
     private static final String SONG_TITLE = "title";
