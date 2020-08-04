@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -30,27 +31,29 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public void onCreate() {
         super.onCreate();
-        mediaPlayer = MediaPlayer.create(this, R.raw.littlebig);
+        Uri uri = Uri.parse("android.resource://" + getPackageName() + "/raw/elcapon");
+        mediaPlayer = MediaPlayer.create(this, uri);
+        Log.d(TAG, "onCreate: URI = " + uri.toString());
         mediaPlayer.setLooping(false);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-            if (intent.getAction().equals(ACTION_PLAY)) {
-                Log.d(TAG, "onStartCommand: " + "ACTION_PLAY");
-                mediaPlayer = MediaPlayer.create(this, R.raw.littlebig);
-                mediaPlayer.seekTo(position);
-                mediaPlayer.start();
-            } else if (intent.getAction().equals(ACTION_PAUSE)) {
-                Log.d(TAG, "onStartCommand: " + "ACTION_PAUSE");
-                mediaPlayer.pause();
-                position = mediaPlayer.getCurrentPosition();
-            } else if (intent.getAction().equals(ACTION_RESUME)) {
-                Log.d(TAG, "onStartCommand: " + "ACTION_RESUME");
-                loadFromSharedPref();
-                mediaPlayer.seekTo(position);
-                mediaPlayer.start();
-            }
+        if (intent.getAction().equals(ACTION_PLAY)) {
+            Log.d(TAG, "onStartCommand: " + "ACTION_PLAY");
+            mediaPlayer = MediaPlayer.create(this, R.raw.elcapon);
+            mediaPlayer.seekTo(position);
+            mediaPlayer.start();
+        } else if (intent.getAction().equals(ACTION_PAUSE)) {
+            Log.d(TAG, "onStartCommand: " + "ACTION_PAUSE");
+            mediaPlayer.pause();
+            position = mediaPlayer.getCurrentPosition();
+        } else if (intent.getAction().equals(ACTION_RESUME)) {
+            Log.d(TAG, "onStartCommand: " + "ACTION_RESUME");
+            loadFromSharedPref();
+            mediaPlayer.seekTo(position);
+            mediaPlayer.start();
+        }
         return START_STICKY;
     }
 
@@ -74,9 +77,10 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         editor.apply();
         Log.d(TAG, "saveToSharedPref: = " + position);
     }
+
     private void loadFromSharedPref() {
         SharedPreferences sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        position = sharedPreferences.getInt(APP_PREFERENCES_POSITION, 0 );
+        position = sharedPreferences.getInt(APP_PREFERENCES_POSITION, 0);
         Log.d(TAG, "loadFromSharedPref: = " + position);
     }
 }

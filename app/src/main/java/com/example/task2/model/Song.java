@@ -64,4 +64,15 @@ public class Song {
     public void setPathToFile(String pathToFile) {
         this.pathToFile = pathToFile;
     }
+
+    @Override
+    public String toString() {
+        return "Song{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", author='" + author + '\'' +
+                ", genre='" + genre + '\'' +
+                ", pathToFile='" + pathToFile + '\'' +
+                '}';
+    }
 }

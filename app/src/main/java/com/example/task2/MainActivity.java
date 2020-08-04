@@ -2,17 +2,24 @@ package com.example.task2;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
-import com.example.task2.data.DataBaseHandler;
+import com.example.task2.data.SongContract;
+import com.example.task2.data.SongsDbHelper;
 import com.example.task2.model.Song;
 
+import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -26,12 +33,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isPlay;
     private boolean wasPlayed;
     private SharedPreferences sharedPreferences;
+    private SongsDbHelper dbHelper;
+    private List<Song> songs = new ArrayList<>();
+    private Song song;
+    private SQLiteDatabase database;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dbHelper = new SongsDbHelper(this);
+        database = dbHelper.getWritableDatabase();
+
+        song = new Song("Title", "CREAM SODA", "Genre",
+                Uri.parse("android.resource://" + getPackageName() + "/raw/elcapon").toString());
+        songs.add(song);
+
+//        addSongToDb();
+        loadSongFromDb();
+
         sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         init();
         setOnClickListener();
@@ -39,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (wasPlayed) {
             resumePlayMusic();
         }
-        DataBaseHandler dataBaseHandler = new DataBaseHandler(this);
+//        DataBaseHandler dataBaseHandler = new DataBaseHandler(this);
 //        dataBaseHandler.deleteDatabase(this);
 //        dataBaseHandler.addSong(new Song("Плачу на техно", "Cream Soda feat. ХЛЕБ",
 //                "dance",  "android.resource://" + getPackageName() + "/" + R.raw.creamsoda));
@@ -65,6 +87,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        for (int i = 0; i < songs.size(); i++) {
 //            Log.d(TAG, "onCreate: = " + songs.get(i).toString());
 //        }
+    }
+
+    private void addSongToDb() {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(SongContract.SongsEntry.COLUMN_TITLE, song.getTitle());
+        contentValues.put(SongContract.SongsEntry.COLUMN_AUTHOR, song.getAuthor());
+        contentValues.put(SongContract.SongsEntry.COLUMN_GENRE, song.getGenre());
+        contentValues.put(SongContract.SongsEntry.COLUMN_PATH_TO_FILE, song.getPathToFile());
+        database.insert(SongContract.SongsEntry.TABLE_NAME, null, contentValues);
+    }
+    private void loadSongFromDb() {
+        Cursor cursor = database.query(SongContract.SongsEntry.TABLE_NAME,
+                null, null, null, null, null, null);
+        while(cursor.moveToNext()) {
+            String title = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_TITLE));
+            String author = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_AUTHOR));
+            String genre = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_GENRE));
+            String path = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_PATH_TO_FILE));
+            Song song = new Song(title, author, genre, path);
+            Log.d(TAG, "loadSongFromDb: " + song.toString());
+        }
+        cursor.close();
     }
 
     private void resumePlayMusic() {
@@ -129,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void loadFromSharedPref() {
-        wasPlayed = sharedPreferences.getBoolean(APP_PREFERENCES_PLAYED, true );
+        wasPlayed = sharedPreferences.getBoolean(APP_PREFERENCES_PLAYED, true);
         Log.d(TAG, "loadFromSharedPref: = " + wasPlayed);
     }
 }
