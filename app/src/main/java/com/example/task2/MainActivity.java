@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.example.task2.data.MyContentProvider;
 import com.example.task2.data.SongContract;
 import com.example.task2.data.SongsDbHelper;
 import com.example.task2.model.Song;
@@ -47,12 +48,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dbHelper = new SongsDbHelper(this);
         database = dbHelper.getWritableDatabase();
 
-        song = new Song("Title", "CREAM SODA", "Genre",
-                Uri.parse("android.resource://" + getPackageName() + "/raw/elcapon").toString());
-        songs.add(song);
-
-//        addSongToDb();
-        loadSongFromDb();
+        addSongToDb();
+//        loadSongFromDb();
+        loadFromContentResolver();
 
         sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         init();
@@ -61,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (wasPlayed) {
             resumePlayMusic();
         }
+        printSounds();
 //        DataBaseHandler dataBaseHandler = new DataBaseHandler(this);
 //        dataBaseHandler.deleteDatabase(this);
 //        dataBaseHandler.addSong(new Song("Плачу на техно", "Cream Soda feat. ХЛЕБ",
@@ -88,8 +87,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            Log.d(TAG, "onCreate: = " + songs.get(i).toString());
 //        }
     }
+    private void printSounds() {
+        for (int i = 0; i < songs.size(); i++) {
+            Log.d(TAG, "printSounds: " + songs.get(i).getPathToFile());
+        }
+    }
 
     private void addSongToDb() {
+        song = new Song("asdfsdf", "asdfsdff", "Танцевальная",
+                Uri.parse("android.resource://" + getPackageName() + "/raw/raim").toString());
+        songs.add(song);
         ContentValues contentValues = new ContentValues();
         contentValues.put(SongContract.SongsEntry.COLUMN_TITLE, song.getTitle());
         contentValues.put(SongContract.SongsEntry.COLUMN_AUTHOR, song.getAuthor());
@@ -109,6 +116,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d(TAG, "loadSongFromDb: " + song.toString());
         }
         cursor.close();
+    }
+
+    private void loadFromContentResolver() {
+        Cursor cursor = getContentResolver().query(
+                MyContentProvider.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+        while (cursor.moveToNext()) {
+
+            String title = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_TITLE));
+            String author = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_AUTHOR));
+            String genre = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_GENRE));
+            String path = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_PATH_TO_FILE));
+            Song song = new Song(title, author, genre, path);
+            songs.add(song);
+            Log.d(TAG, "loadFromContentResolver!!!: " + song.toString());
+        }
     }
 
     private void resumePlayMusic() {
@@ -137,7 +163,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (!isPlay) {
                     Log.d(TAG, "onClick: play button");
                     startService(new Intent(this, MusicService.class)
-                            .setAction(MusicService.ACTION_PLAY));
+                            .setAction(MusicService.ACTION_PLAY).putExtra("song",
+                                    songs.get(songs.size() - 1).getPathToFile()));
                     isPlay = true;
                 }
                 break;

@@ -41,8 +41,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction().equals(ACTION_PLAY)) {
             Log.d(TAG, "onStartCommand: " + "ACTION_PLAY");
-            mediaPlayer = MediaPlayer.create(this, R.raw.elcapon);
-            mediaPlayer.seekTo(position);
+            // URI SENT FROM MAIN ACTIVITY
+            Uri songUri = Uri.parse(intent.getStringExtra("song"));
+            Log.d(TAG, "onStartCommand: songUri = " + songUri.toString());
+            mediaPlayer = MediaPlayer.create(this, songUri);
+            mediaPlayer.seekTo(0);
             mediaPlayer.start();
         } else if (intent.getAction().equals(ACTION_PAUSE)) {
             Log.d(TAG, "onStartCommand: " + "ACTION_PAUSE");
