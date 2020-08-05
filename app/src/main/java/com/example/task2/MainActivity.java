@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (wasPlayed) {
             resumePlayMusic();
         }
+        loadFromContentResolver();
         printSounds();
     }
 
@@ -82,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                Uri.parse("android.resource://" + getPackageName() + "/raw/taypan_gunda").toString()));
 //        addSongToDb(song = new Song("Dynoro & Fumaratto", "Me Provocas", "Танцевальная",
 //                Uri.parse("android.resource://" + getPackageName() + "/raw/dynoro").toString()));
-        loadFromContentResolver();
+
     }
 
     private void addSongToDb(Song song) {
@@ -116,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 null,
                 null,
                 null);
+        Log.d(TAG, "loadFromContentResolver: ");
         while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_ID));
             String title = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_TITLE));
