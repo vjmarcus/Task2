@@ -1,6 +1,7 @@
 package com.example.task2;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.database.Cursor;
@@ -11,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.example.task2.adapter.SongAdapter;
 import com.example.task2.data.MyContentProvider;
 import com.example.task2.data.SongContract;
 import com.example.task2.model.Song;
@@ -18,7 +20,7 @@ import com.example.task2.model.Song;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SecondActivity extends AppCompatActivity {
+public class SecondActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "MyApp";
     private Spinner chooseAuthorSpinner;
@@ -38,7 +40,21 @@ public class SecondActivity extends AppCompatActivity {
         fillAuthorsFromSongs();
         fillGenresFromSongs();
         setAdapters();
+        chooseAuthorSpinner.setOnItemSelectedListener(this);
+        chooseGenreSpinner.setOnItemSelectedListener(this);
 
+    }
+
+    private void fillRecycler() {
+        printList(songs);
+        SongAdapter songAdapter = new SongAdapter(songs);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(songAdapter);
+    }
+    private void printList(List list) {
+        for (int i = 0; i < list.size(); i++) {
+            Log.d(TAG, "printList: = " + list.get(i).toString());
+        }
     }
 
     private void setAdapters() {
@@ -93,5 +109,21 @@ public class SecondActivity extends AppCompatActivity {
                 genres.add(genre);
             }
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        String item = (String) adapterView.getItemAtPosition(i);
+        switch (item) {
+            case "Выберите автора":
+                break;
+        }
+        Log.d(TAG, "onItemSelected: = " + item );
+        fillRecycler();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 }
