@@ -9,11 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".SecondActivity"></activity>
+
         <provider
             android:name=".data.MyContentProvider"
             android:authorities="com.example.task2.data"
             android:enabled="true"
-            android:exported="true"></provider>
+            android:exported="true" />
 
         <service
             android:name=".MusicService"

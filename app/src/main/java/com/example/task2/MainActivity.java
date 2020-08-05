@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button playButton;
     private Button pauseButton;
     private Button stopButton;
+    private Button chooseAuthorButton;
     private boolean isPlay;
     private boolean wasPlayed;
     private SharedPreferences sharedPreferences;
@@ -138,12 +139,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         playButton.setOnClickListener(this);
         pauseButton.setOnClickListener(this);
         stopButton.setOnClickListener(this);
+        chooseAuthorButton.setOnClickListener(this);
     }
 
     private void init() {
         playButton = findViewById(R.id.playButton);
         pauseButton = findViewById(R.id.pauseButton);
         stopButton = findViewById(R.id.stopButton);
+        chooseAuthorButton = findViewById(R.id.chooseAuthorButton);
     }
 
     @Override
@@ -171,6 +174,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 stopService(new Intent(this, MusicService.class));
                 isPlay = false;
                 break;
+            case R.id.chooseAuthorButton:
+                Log.d(TAG, "onClick: choose author button");
+                Intent intent = new Intent(this, SecondActivity.class);
+                startActivity(intent);
         }
     }
 

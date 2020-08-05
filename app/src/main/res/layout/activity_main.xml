@@ -74,4 +74,14 @@
         app:layout_constraintBottom_toTopOf="@+id/pauseButton"
         app:layout_constraintStart_toStartOf="@+id/authorTextView"
         app:layout_constraintTop_toBottomOf="@+id/authorTextView" />
+
+    <Button
+        android:id="@+id/chooseAuthorButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/choose_author"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pauseButton" />
 </androidx.constraintlayout.widget.ConstraintLayout>
