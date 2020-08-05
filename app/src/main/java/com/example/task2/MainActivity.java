@@ -48,10 +48,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dbHelper = new SongsDbHelper(this);
         database = dbHelper.getWritableDatabase();
 
-//        addSongToDb();
-//        loadSongFromDb();
-        loadFromContentResolver();
-
         sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         init();
         setOnClickListener();
@@ -61,10 +57,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         printSounds();
     }
+
     private void printSounds() {
         for (int i = 0; i < songs.size(); i++) {
             Log.d(TAG, "printSounds: " + songs.get(i).getPathToFile());
         }
+
 //        addSongToDb(song = new Song("Двигаться", "Raim", "Молодежная",
 //                Uri.parse("android.resource://" + getPackageName() + "/raw/raim").toString()));
 //        addSongToDb(song = new Song("MAMACITA", "Black Eyed Peas", "Танцевальная",
@@ -85,10 +83,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                Uri.parse("android.resource://" + getPackageName() + "/raw/taypan_gunda").toString()));
 //        addSongToDb(song = new Song("Dynoro & Fumaratto", "Me Provocas", "Танцевальная",
 //                Uri.parse("android.resource://" + getPackageName() + "/raw/dynoro").toString()));
-//        addSongToDb(song = new Song("G Paradise", " Arnon Ft. Jonisa", "Танцевальная",
-//                Uri.parse("android.resource://" + getPackageName() + "/raw/paradise").toString()));
+        loadFromContentResolver();
     }
-
 
     private void addSongToDb(Song song) {
         ContentValues contentValues = new ContentValues();
@@ -98,15 +94,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         contentValues.put(SongContract.SongsEntry.COLUMN_PATH_TO_FILE, song.getPathToFile());
         database.insert(SongContract.SongsEntry.TABLE_NAME, null, contentValues);
     }
+
     private void loadSongFromDb() {
         Cursor cursor = database.query(SongContract.SongsEntry.TABLE_NAME,
                 null, null, null, null, null, null);
-        while(cursor.moveToNext()) {
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_ID));
             String title = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_TITLE));
             String author = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_AUTHOR));
             String genre = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_GENRE));
             String path = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_PATH_TO_FILE));
-            Song song = new Song(title, author, genre, path);
+            Song song = new Song(id, title, author, genre, path);
             Log.d(TAG, "loadSongFromDb: " + song.toString());
         }
         cursor.close();
@@ -120,12 +118,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 null,
                 null);
         while (cursor.moveToNext()) {
-
+            int id = cursor.getInt(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_ID));
             String title = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_TITLE));
             String author = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_AUTHOR));
             String genre = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_GENRE));
             String path = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_PATH_TO_FILE));
-            Song song = new Song(title, author, genre, path);
+            Song song = new Song(id, title, author, genre, path);
             songs.add(song);
             Log.d(TAG, "loadFromContentResolver!!!: " + song.toString());
         }
