@@ -6,48 +6,49 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <ImageButton
-        android:id="@+id/playImageButton"
-        android:layout_width="60dp"
+    <Button
+        android:id="@+id/playButton"
+        android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginTop="172dp"
-        android:contentDescription="@string/playImageButton"
-        android:src="@drawable/play"
-        app:layout_constraintEnd_toStartOf="@+id/pauseImageButton"
+        android:contentDescription="@string/playButton"
+        android:text="@string/play"
+        app:layout_constraintEnd_toStartOf="@+id/pauseButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/pauseImageButton"
-        android:layout_width="60dp"
+    <Button
+        android:id="@+id/pauseButton"
+        android:layout_width="0dp"
         android:layout_height="60dp"
-        android:contentDescription="@string/pauseImageButton"
-        android:src="@drawable/pause"
-        app:layout_constraintEnd_toStartOf="@+id/stopImageButton"
+        android:contentDescription="@string/pauseButton"
+        android:text="@string/pause"
+        app:layout_constraintEnd_toStartOf="@+id/stopButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/playImageButton"
-        app:layout_constraintTop_toTopOf="@+id/playImageButton" />
+        app:layout_constraintStart_toEndOf="@+id/playButton"
+        app:layout_constraintTop_toTopOf="@+id/playButton" />
 
-    <ImageButton
-        android:id="@+id/stopImageButton"
-        android:layout_width="60dp"
+    <Button
+        android:id="@+id/stopButton"
+        android:layout_width="0dp"
         android:layout_height="60dp"
-        android:contentDescription="@string/stopImageButton"
-        android:src="@drawable/stop"
+        android:contentDescription="@string/stopButton"
+        android:text="@string/stop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/pauseImageButton"
-        app:layout_constraintTop_toTopOf="@+id/pauseImageButton" />
+        app:layout_constraintStart_toEndOf="@+id/pauseButton"
+        app:layout_constraintTop_toTopOf="@+id/pauseButton" />
 
     <TextView
         android:id="@+id/TitleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/text_size"
-        app:layout_constraintBottom_toTopOf="@+id/authorTextView"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
         android:text="@string/song_name"
+        android:textSize="@dimen/text_size"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -55,21 +56,22 @@
         android:id="@+id/authorTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/text_size"
         android:text="@string/author"
+        android:textSize="@dimen/text_size"
         app:layout_constraintBottom_toTopOf="@+id/genreTextView"
+        app:layout_constraintEnd_toEndOf="@+id/TitleTextView"
         app:layout_constraintStart_toStartOf="@+id/TitleTextView"
         app:layout_constraintTop_toBottomOf="@+id/TitleTextView" />
 
     <TextView
         android:id="@+id/genreTextView"
-        android:text="@string/genre"
-        android:textSize="@dimen/text_size"
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
         android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/pauseImageButton"
+        android:text="@string/genre"
+        android:textSize="@dimen/text_size"
+        app:layout_constraintBottom_toTopOf="@+id/pauseButton"
         app:layout_constraintStart_toStartOf="@+id/authorTextView"
         app:layout_constraintTop_toBottomOf="@+id/authorTextView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

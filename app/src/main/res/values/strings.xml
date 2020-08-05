@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">Task2</string>
-    <string name="playImageButton">playImageButton</string>
-    <string name="pauseImageButton">pauseImageButton</string>
-    <string name="stopImageButton">stopImageButton</string>
+    <string name="playButton">playImageButton</string>
+    <string name="pauseButton">pauseImageButton</string>
+    <string name="stopButton">stopImageButton</string>
     <string name="song_name">Название песни</string>
     <string name="author">Автор</string>
     <string name="genre">Жанр</string>
+    <string name="play">PLAY</string>
+    <string name="pause">PAUSE</string>
+    <string name="stop">STOP</string>
 </resources>

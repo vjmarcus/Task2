@@ -8,11 +8,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.Button;
 
 import com.example.task2.data.MyContentProvider;
 import com.example.task2.data.SongContract;
@@ -20,7 +19,6 @@ import com.example.task2.data.SongsDbHelper;
 import com.example.task2.model.Song;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -28,9 +26,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "MyApp";
     private static final String APP_PREFERENCES_PLAYED = "APP_PREFERENCES_PLAYED";
     private static final String APP_PREFERENCES = "APP_PREFERENCES";
-    private ImageButton playImageButton;
-    private ImageButton pauseImageButton;
-    private ImageButton stopImageButton;
+    private Button playButton;
+    private Button pauseButton;
+    private Button stopButton;
     private boolean isPlay;
     private boolean wasPlayed;
     private SharedPreferences sharedPreferences;
@@ -137,21 +135,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setOnClickListener() {
-        playImageButton.setOnClickListener(this);
-        pauseImageButton.setOnClickListener(this);
-        stopImageButton.setOnClickListener(this);
+        playButton.setOnClickListener(this);
+        pauseButton.setOnClickListener(this);
+        stopButton.setOnClickListener(this);
     }
 
     private void init() {
-        playImageButton = findViewById(R.id.playImageButton);
-        pauseImageButton = findViewById(R.id.pauseImageButton);
-        stopImageButton = findViewById(R.id.stopImageButton);
+        playButton = findViewById(R.id.playButton);
+        pauseButton = findViewById(R.id.pauseButton);
+        stopButton = findViewById(R.id.stopButton);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.playImageButton:
+            case R.id.playButton:
                 if (!isPlay) {
                     Log.d(TAG, "onClick: play button");
                     startService(new Intent(this, MusicService.class)
@@ -160,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     isPlay = true;
                 }
                 break;
-            case R.id.pauseImageButton:
+            case R.id.pauseButton:
                 if (isPlay) {
                     Log.d(TAG, "onClick: pause button");
                     startService(new Intent(this, MusicService.class)
@@ -168,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     isPlay = false;
                 }
                 break;
-            case R.id.stopImageButton:
+            case R.id.stopButton:
                 Log.d(TAG, "onClick: stop button");
                 stopService(new Intent(this, MusicService.class));
                 isPlay = false;
