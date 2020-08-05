@@ -47,17 +47,29 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
 
     }
 
-    private void fillRecycler(String filteredkey) {
+    private void fillRecycler(String filteredKey, String sortType) {
         songsFiltered.clear();
-        for (int i = 0; i < songs.size(); i++) {
-            if (songs.get(i).getGenre().equals(filteredkey)){
-                songsFiltered.add(songs.get(i));
-            }
+        switch (sortType) {
+            case "genre":
+                for (int i = 0; i < songs.size(); i++) {
+                    if (songs.get(i).getGenre().equals(filteredKey)) {
+                        songsFiltered.add(songs.get(i));
+                    }
+                }
+                break;
+            case "author":
+                for (int i = 0; i < songs.size(); i++) {
+                    if (songs.get(i).getAuthor().equals(filteredKey)) {
+                        songsFiltered.add(songs.get(i));
+                    }
+                }
+                break;
         }
         SongAdapter songAdapter = new SongAdapter(songsFiltered);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(songAdapter);
     }
+
     private void printList(List list) {
         for (int i = 0; i < list.size(); i++) {
             Log.d(TAG, "printList: = " + list.get(i).toString());
@@ -121,26 +133,28 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         itemSelectedInSpinner = (String) adapterView.getItemAtPosition(i);
+        int indexValue = adapterView.getSelectedItemPosition();
         // как добавить все варианты, если они изменяются динамически?
-        switch (itemSelectedInSpinner){
-            case "Выберите автора":
-                Log.d(TAG, "onItemSelected: выберите автора");
-                break;
-            case "Выберите жанр":
-                Log.d(TAG, "onItemSelected: выберите жанр");
-                break;
-            case "Молодежная":
-                fillRecycler("Молодежная");
-                break;
-            case "Танцевальная":
-                fillRecycler("Танцевальная");
-                break;
-        }
-        Log.d(TAG, "onItemSelected: = " + itemSelectedInSpinner );
+//        switch (itemSelectedInSpinner){
+//            case "Выберите автора":
+//                Log.d(TAG, "onItemSelected: выберите автора");
+//                break;
+//            case "Выберите жанр":
+//                Log.d(TAG, "onItemSelected: выберите жанр");
+//                break;
+//            case "Молодежная":
+//                fillRecycler("Молодежная");
+//                break;
+//            case "Танцевальная":
+//                fillRecycler("Танцевальная");
+//                break;
+
+        Log.d(TAG, "onItemSelected: = " + itemSelectedInSpinner);
+        Log.d(TAG, "onItemSelected: = " + indexValue);
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-
+        //do nothing
     }
 }
