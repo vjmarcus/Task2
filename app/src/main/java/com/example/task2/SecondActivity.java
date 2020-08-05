@@ -27,9 +27,11 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
     private Spinner chooseGenreSpinner;
     private RecyclerView recyclerView;
     private List<Song> songs = new ArrayList<>();
+    private List<Song> songsFiltered = new ArrayList<>();
     private List<String> authors = new ArrayList<>();
     private List<String> genres = new ArrayList<>();
     private ArrayAdapter<String> authorsAdapter;
+    private String itemSelectedInSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +47,14 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
 
     }
 
-    private void fillRecycler() {
-        printList(songs);
-        SongAdapter songAdapter = new SongAdapter(songs);
+    private void fillRecycler(String filteredkey) {
+        songsFiltered.clear();
+        for (int i = 0; i < songs.size(); i++) {
+            if (songs.get(i).getGenre().equals(filteredkey)){
+                songsFiltered.add(songs.get(i));
+            }
+        }
+        SongAdapter songAdapter = new SongAdapter(songsFiltered);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(songAdapter);
     }
@@ -113,13 +120,23 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        String item = (String) adapterView.getItemAtPosition(i);
-        switch (item) {
+        itemSelectedInSpinner = (String) adapterView.getItemAtPosition(i);
+        // как добавить все варианты, если они изменяются динамически?
+        switch (itemSelectedInSpinner){
             case "Выберите автора":
+                Log.d(TAG, "onItemSelected: выберите автора");
+                break;
+            case "Выберите жанр":
+                Log.d(TAG, "onItemSelected: выберите жанр");
+                break;
+            case "Молодежная":
+                fillRecycler("Молодежная");
+                break;
+            case "Танцевальная":
+                fillRecycler("Танцевальная");
                 break;
         }
-        Log.d(TAG, "onItemSelected: = " + item );
-        fillRecycler();
+        Log.d(TAG, "onItemSelected: = " + itemSelectedInSpinner );
     }
 
     @Override
