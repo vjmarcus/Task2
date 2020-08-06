@@ -13,6 +13,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public static final String ACTION_PLAY = "com.example.action.PLAY";
     public static final String ACTION_PAUSE = "com.example.action.PAUSE";
     public static final String ACTION_RESUME = "com.example.action.RESUME";
+    public static final String ACTION_RESTORE = "com.example.action.RESTORE";
     public static final String APP_PREFERENCES = "APP_PREFERENCES";
     public static final String APP_PREFERENCES_POSITION = "APP_PREFERENCES_POSITION";
     public static final String TAG = "MyApp";
@@ -53,6 +54,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
             position = mediaPlayer.getCurrentPosition();
         } else if (intent.getAction().equals(ACTION_RESUME)) {
             Log.d(TAG, "onStartCommand: " + "ACTION_RESUME");
+//            loadFromSharedPref();
+////            mediaPlayer.seekTo(position);
+            mediaPlayer.start();
+        } else if (intent.getAction().equals(ACTION_RESTORE)) {
+            Log.d(TAG, "onStartCommand: " + "ACTION_RESTORE");
             loadFromSharedPref();
             mediaPlayer.seekTo(position);
             mediaPlayer.start();

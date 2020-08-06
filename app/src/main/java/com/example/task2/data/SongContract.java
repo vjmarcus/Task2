@@ -1,9 +1,6 @@
 package com.example.task2.data;
 
-import android.provider.BaseColumns;
-
 public class SongContract {
-    // if implements baseColumns _id not needed
     public static final class SongsEntry {
         public static final String TABLE_NAME = "songs";
         public static final String COLUMN_ID = "_id";

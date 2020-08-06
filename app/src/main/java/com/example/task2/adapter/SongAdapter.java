@@ -4,23 +4,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.task2.R;
+import com.example.task2.SecondActivity;
 import com.example.task2.model.Song;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> {
 
     private List<Song> songs;
+    private SecondActivity.RecyclerViewClickListener recyclerViewClickListener;
 
-    public SongAdapter(List<Song> songs) {
+    public SongAdapter(List<Song> songs, SecondActivity.RecyclerViewClickListener recyclerViewClickListener) {
         this.songs = songs;
+        this.recyclerViewClickListener = recyclerViewClickListener;
     }
 
     @NonNull
@@ -42,7 +40,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         return songs.size();
     }
 
-    class SongViewHolder extends RecyclerView.ViewHolder {
+    class SongViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final TextView authorItemTextView;
         private final TextView titleItemTextView;
@@ -51,7 +49,12 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
             super(itemView);
             authorItemTextView = itemView.findViewById(R.id.authorItemTextView);
             titleItemTextView = itemView.findViewById(R.id.titleItemTextView);
+            itemView.setOnClickListener(this);
+        }
 
+        @Override
+        public void onClick(View view) {
+            recyclerViewClickListener.recyclerViewListClicked(view, this.getLayoutPosition());
         }
     }
 }

@@ -2,17 +2,20 @@ package com.example.task2;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.task2.data.MyContentProvider;
 import com.example.task2.data.SongContract;
@@ -27,27 +30,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "MyApp";
     private static final String APP_PREFERENCES_PLAYED = "APP_PREFERENCES_PLAYED";
     private static final String APP_PREFERENCES = "APP_PREFERENCES";
+    public static final String BROADCAST_ACTION = "com.example.task2.broadcast";
+    public static final String SONG_TITLE = "title";
+    public static final String SONG_AUTHOR = "author";
+    public static final String SONG_GENRE = "genre";
+    public static final String SONG_PATH = "path";
     private Button playButton;
     private Button pauseButton;
     private Button stopButton;
     private Button chooseAuthorButton;
+    private TextView titleTextView;
+    private TextView authorTextView;
+    private TextView genreTextView;
     private boolean isPlay;
     private boolean wasPlayed;
     private SharedPreferences sharedPreferences;
     private SongsDbHelper dbHelper;
     private List<Song> songs = new ArrayList<>();
-    private Song song;
     private SQLiteDatabase database;
-
+    private String songPath;
+    private BroadcastReceiver broadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         dbHelper = new SongsDbHelper(this);
         database = dbHelper.getWritableDatabase();
-
         sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         init();
         setOnClickListener();
@@ -56,13 +65,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             resumePlayMusic();
         }
         loadFromContentResolver();
-        printSounds();
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String title = intent.getStringExtra(SONG_TITLE);
+                String author = intent.getStringExtra(SONG_AUTHOR);
+                String genre = intent.getStringExtra(SONG_GENRE);
+                songPath = intent.getStringExtra(SONG_PATH);
+                Log.d(TAG, "onReceive: = " + title + ", "
+                        + author + ", " + genre + ", " + songPath);
+                titleTextView.setText(title);
+                authorTextView.setText(author);
+                genreTextView.setText(genre);
+                stopService(new Intent(getApplicationContext(), MusicService.class));
+                isPlay = false;
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter(BROADCAST_ACTION);
+        registerReceiver(broadcastReceiver, intentFilter);
     }
-
-    private void printSounds() {
-        for (int i = 0; i < songs.size(); i++) {
-            Log.d(TAG, "printSounds: " + songs.get(i).getPathToFile());
-        }
 
 //        addSongToDb(song = new Song("Двигаться", "Raim", "Молодежная",
 //                Uri.parse("android.resource://" + getPackageName() + "/raw/raim").toString()));
@@ -85,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        addSongToDb(song = new Song("Dynoro & Fumaratto", "Me Provocas", "Танцевальная",
 //                Uri.parse("android.resource://" + getPackageName() + "/raw/dynoro").toString()));
 
-    }
 
     private void addSongToDb(Song song) {
         ContentValues contentValues = new ContentValues();
@@ -118,7 +138,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 null,
                 null,
                 null);
-        Log.d(TAG, "loadFromContentResolver: ");
         while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_ID));
             String title = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_TITLE));
@@ -150,38 +169,60 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         pauseButton = findViewById(R.id.pauseButton);
         stopButton = findViewById(R.id.stopButton);
         chooseAuthorButton = findViewById(R.id.chooseAuthorButton);
+        titleTextView = findViewById(R.id.titleTextView);
+        authorTextView = findViewById(R.id.authorTextView);
+        genreTextView = findViewById(R.id.genreTextView);
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.playButton:
-                if (!isPlay) {
-                    Log.d(TAG, "onClick: play button");
-                    startService(new Intent(this, MusicService.class)
-                            .setAction(MusicService.ACTION_PLAY).putExtra("song",
-                                    songs.get(songs.size() - 1).getPathToFile()));
-                    isPlay = true;
-                }
-                break;
-            case R.id.pauseButton:
-                if (isPlay) {
-                    Log.d(TAG, "onClick: pause button");
-                    startService(new Intent(this, MusicService.class)
-                            .setAction(MusicService.ACTION_PAUSE));
+        // load song from sharedPref, if null - choose song!
+        if (songPath == null && view.getId() != R.id.chooseAuthorButton) {
+            Toast.makeText(this, "Choose song!", Toast.LENGTH_SHORT).show();
+        } else {
+            switch (view.getId()) {
+                case R.id.playButton:
+                    if (!isPlay) {
+                        if (wasPlayed){
+                            resumePlayMusic();
+                        } else {
+                            startNewPlayMusic();
+                        }
+                    }
+                    break;
+                case R.id.pauseButton:
+                    if (isPlay) {
+                        pausePlayMusic();
+                    }
+                    break;
+                case R.id.stopButton:
+                    Log.d(TAG, "onClick: stop button");
+                    stopService(new Intent(this, MusicService.class));
                     isPlay = false;
-                }
-                break;
-            case R.id.stopButton:
-                Log.d(TAG, "onClick: stop button");
-                stopService(new Intent(this, MusicService.class));
-                isPlay = false;
-                break;
-            case R.id.chooseAuthorButton:
-                Log.d(TAG, "onClick: choose author button");
-                Intent intent = new Intent(this, SecondActivity.class);
-                startActivity(intent);
+                    wasPlayed = false;
+                    break;
+                case R.id.chooseAuthorButton:
+                    Log.d(TAG, "onClick: choose author button");
+                    Intent intent = new Intent(this, SecondActivity.class);
+                    startActivity(intent);
+            }
         }
+    }
+
+    private void pausePlayMusic() {
+        Log.d(TAG, "onClick: pause button");
+        startService(new Intent(this, MusicService.class)
+                .setAction(MusicService.ACTION_PAUSE));
+        isPlay = false;
+        wasPlayed = true;
+    }
+
+    private void startNewPlayMusic() {
+        Log.d(TAG, "onClick: play button");
+        startService(new Intent(this, MusicService.class)
+                .setAction(MusicService.ACTION_PLAY).putExtra("song",
+                        songPath));
+        isPlay = true;
     }
 
     @Override
@@ -189,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
         stopService(new Intent(this, MusicService.class));
         saveToSharedPref();
+        unregisterReceiver(broadcastReceiver);
     }
 
     private void saveToSharedPref() {
@@ -201,6 +243,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void loadFromSharedPref() {
         wasPlayed = sharedPreferences.getBoolean(APP_PREFERENCES_PLAYED, true);
-        Log.d(TAG, "loadFromSharedPref: = " + wasPlayed);
+        Log.d(TAG, "loadFromSharedPref: wasPlayed = " + wasPlayed);
     }
 }

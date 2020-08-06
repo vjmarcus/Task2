@@ -41,7 +41,7 @@
         app:layout_constraintTop_toTopOf="@+id/pauseButton" />
 
     <TextView
-        android:id="@+id/TitleTextView"
+        android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -59,9 +59,9 @@
         android:text="@string/author"
         android:textSize="@dimen/text_size"
         app:layout_constraintBottom_toTopOf="@+id/genreTextView"
-        app:layout_constraintEnd_toEndOf="@+id/TitleTextView"
-        app:layout_constraintStart_toStartOf="@+id/TitleTextView"
-        app:layout_constraintTop_toBottomOf="@+id/TitleTextView" />
+        app:layout_constraintEnd_toEndOf="@+id/titleTextView"
+        app:layout_constraintStart_toStartOf="@+id/titleTextView"
+        app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
 
     <TextView
         android:id="@+id/genreTextView"
