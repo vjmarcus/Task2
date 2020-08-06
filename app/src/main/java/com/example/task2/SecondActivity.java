@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.task2.adapter.SongAdapter;
 import com.example.task2.data.MyContentProvider;
@@ -49,9 +50,10 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
         chooseGenreSpinner.setOnItemSelectedListener(this);
     }
 
-    private void fillRecycler(String filteredKey, String sortType) {
+    private void fillRecycler(String filteredKey, String type) {
         songsFiltered.clear();
-        switch (sortType) {
+        Log.d(TAG, "fillRecycler: = " + filteredKey);
+        switch (type) {
             case "genre":
                 for (int i = 0; i < songs.size(); i++) {
                     if (songs.get(i).getGenre().equals(filteredKey)) {
@@ -71,7 +73,6 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
             @Override
             public void recyclerViewListClicked(View v, int position) {
                sentBroadcast(position);
-
             }
         };
         SongAdapter songAdapter = new SongAdapter(songsFiltered, recyclerViewClickListener);
@@ -165,18 +166,18 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
                 fillRecycler("Танцевальная", "genre");
                 chooseAuthorSpinner.setSelection(0);
                 break;
-            case "Raim":
-                fillRecycler("Raim", "author");
-                chooseGenreSpinner.setSelection(0);
-                break;
-            case "Black Eyed Peas":
-                fillRecycler("Black Eyed Peas", "author");
-                chooseGenreSpinner.setSelection(0);
-                break;
+//            case "Raim":
+//                fillRecycler("Raim", "author");
+//                chooseGenreSpinner.setSelection(0);
+//                break;
+//            case "Black Eyed Peas":
+//                fillRecycler("Black Eyed Peas", "author");
+//                chooseGenreSpinner.setSelection(0);
+//                break;
+            default: fillRecycler(itemSelectedInSpinner, "author");
         }
-        Log.d(TAG, "onItemSelected: = " + indexValue);
-        Log.d(TAG, "onItemSelected: = " + itemSelectedInSpinner);
     }
+
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
         //do nothing

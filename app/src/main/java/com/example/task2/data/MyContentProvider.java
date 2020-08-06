@@ -17,6 +17,7 @@ public class MyContentProvider extends ContentProvider {
     private static final int ALL_SONGS = 2;
     private static final String AUTHORITY = "com.example.task2.data";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/songs");
+    public static final Uri CONTENT_URI_SINGLE = Uri.parse("content://" + AUTHORITY + "/songs/#");
     static final UriMatcher uriMatcher;
 
     static {
@@ -69,7 +70,8 @@ public class MyContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Not yet implemented");
         }
-        Cursor cursor = queryBuilder.query(database, projection, selection, selectionArgs, null, null, sortOrder);
+        Cursor cursor = queryBuilder.query(database, projection, selection,
+                selectionArgs, null, null, sortOrder);
         return cursor;
     }
 

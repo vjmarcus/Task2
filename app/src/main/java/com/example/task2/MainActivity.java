@@ -48,8 +48,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SongsDbHelper dbHelper;
     private List<Song> songs = new ArrayList<>();
     private SQLiteDatabase database;
-    private String songPath;
     private BroadcastReceiver broadcastReceiver;
+    private String songTitle;
+    private String songAuthor;
+    private String songGenre;
+    private String songPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         loadFromSharedPref();
         if (wasPlayed) {
             resumePlayMusic();
+            titleTextView.setText(songTitle);
+            genreTextView.setText(songGenre);
+            authorTextView.setText(songAuthor);
         }
         loadFromContentResolver();
         broadcastReceiver = new BroadcastReceiver() {
@@ -140,11 +146,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 null);
         while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_ID));
-            String title = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_TITLE));
-            String author = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_AUTHOR));
-            String genre = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_GENRE));
-            String path = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_PATH_TO_FILE));
-            Song song = new Song(id, title, author, genre, path);
+            songTitle = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_TITLE));
+            songAuthor = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_AUTHOR));
+            songGenre = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_GENRE));
+            songPath = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_PATH_TO_FILE));
+            Song song = new Song(id, songTitle, songAuthor, songGenre, songPath);
             songs.add(song);
             Log.d(TAG, "loadFromContentResolver!!!: " + song.toString());
         }
@@ -183,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             switch (view.getId()) {
                 case R.id.playButton:
                     if (!isPlay) {
-                        if (wasPlayed){
+                        if (wasPlayed) {
                             resumePlayMusic();
                         } else {
                             startNewPlayMusic();
@@ -237,12 +243,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(APP_PREFERENCES_PLAYED, isPlay);
+        editor.putString(SONG_TITLE, songTitle);
+        editor.putString(SONG_AUTHOR, songAuthor);
+        editor.putString(SONG_GENRE, songGenre);
+        editor.putString(SONG_PATH, songPath);
         editor.apply();
         Log.d(TAG, "saveToSharedPref main: = " + isPlay);
     }
 
     private void loadFromSharedPref() {
         wasPlayed = sharedPreferences.getBoolean(APP_PREFERENCES_PLAYED, true);
+        songTitle = sharedPreferences.getString(SONG_TITLE, null);
+        songAuthor = sharedPreferences.getString(SONG_AUTHOR, null);
+        songGenre = sharedPreferences.getString(SONG_GENRE, null);
+        songPath = sharedPreferences.getString(SONG_PATH, null);
         Log.d(TAG, "loadFromSharedPref: wasPlayed = " + wasPlayed);
     }
 }
