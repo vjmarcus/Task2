@@ -112,31 +112,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        addSongToDb(song = new Song("Dynoro & Fumaratto", "Me Provocas", "Танцевальная",
 //                Uri.parse("android.resource://" + getPackageName() + "/raw/dynoro").toString()));
 
-
-    private void addSongToDb(Song song) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(SongContract.SongsEntry.COLUMN_TITLE, song.getTitle());
-        contentValues.put(SongContract.SongsEntry.COLUMN_AUTHOR, song.getAuthor());
-        contentValues.put(SongContract.SongsEntry.COLUMN_GENRE, song.getGenre());
-        contentValues.put(SongContract.SongsEntry.COLUMN_PATH_TO_FILE, song.getPathToFile());
-        database.insert(SongContract.SongsEntry.TABLE_NAME, null, contentValues);
-    }
-
-    private void loadSongFromDb() {
-        Cursor cursor = database.query(SongContract.SongsEntry.TABLE_NAME,
-                null, null, null, null, null, null);
-        while (cursor.moveToNext()) {
-            int id = cursor.getInt(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_ID));
-            String title = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_TITLE));
-            String author = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_AUTHOR));
-            String genre = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_GENRE));
-            String path = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_PATH_TO_FILE));
-            Song song = new Song(id, title, author, genre, path);
-            Log.d(TAG, "loadSongFromDb: " + song.toString());
-        }
-        cursor.close();
-    }
-
     private void loadFromContentResolver() {
         Cursor cursor = getContentResolver().query(
                 MyContentProvider.CONTENT_URI,
@@ -152,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             songPath = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_PATH_TO_FILE));
             Song song = new Song(id, songTitle, songAuthor, songGenre, songPath);
             songs.add(song);
-            Log.d(TAG, "loadFromContentResolver!!!: " + song.toString());
+//            Log.d(TAG, "loadFromContentResolver!!!: " + song.toString());
         }
     }
 
@@ -206,6 +181,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     stopService(new Intent(this, MusicService.class));
                     isPlay = false;
                     wasPlayed = false;
+                    titleTextView.setText("Выберите песню");
+                    authorTextView.setText("");
+                    genreTextView.setText("");
                     break;
                 case R.id.chooseAuthorButton:
                     Log.d(TAG, "onClick: choose author button");
