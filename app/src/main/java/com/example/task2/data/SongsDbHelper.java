@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.task2.util.Utils;
+
 public class SongsDbHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "songsDB";
@@ -20,7 +22,7 @@ public class SongsDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL(SongContract.DROP_COMMAND);
+        //DO NOTHING
         onCreate(sqLiteDatabase);
     }
 }

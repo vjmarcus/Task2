@@ -1,6 +1,5 @@
 package com.example.task2.data;
 
-//убрать лишний класс Контакр либо Ентри
 public class SongContract {
     public static final String TABLE_NAME = "songs";
     public static final String COLUMN_ID = "_id";
@@ -15,7 +14,4 @@ public class SongContract {
             + COLUMN_AUTHOR + " TEXT, "
             + COLUMN_GENRE + " TEXT, "
             + COLUMN_PATH_TO_FILE + " TEXT" + ")";
-
-    public static final String DROP_COMMAND = "DROP TABLE IF EXISTS " + TABLE_NAME;
-    // Делать добалвение новых без Сноса базы
 }

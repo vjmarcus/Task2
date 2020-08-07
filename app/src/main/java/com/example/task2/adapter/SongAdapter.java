@@ -15,7 +15,6 @@ import java.util.List;
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> {
 
     private List<Song> songs;
-    //убрать сенконд активитит из назыания
     private RecyclerViewClickListener recyclerViewClickListener;
 
     public SongAdapter(List<Song> songs, RecyclerViewClickListener recyclerViewClickListener) {

@@ -17,6 +17,7 @@ import com.example.task2.adapter.SongAdapter;
 import com.example.task2.data.MyContentProvider;
 import com.example.task2.data.SongContract;
 import com.example.task2.model.Song;
+import com.example.task2.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,6 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
         songsFiltered.clear();
         Log.d(TAG, "fillRecycler: = " + filteredKey);
         switch (type) {
-            // в КОнстанты либо стрини
             case GENRE:
                 for (int i = 0; i < songs.size(); i++) {
                     if (songs.get(i).getGenre().equals(filteredKey)) {
@@ -66,8 +66,11 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
                     }
                 }
                 break;
-        }
-        // Вынести к переменным или в отдельный метод
+        }initRecyclerView();
+
+    }
+
+    private void initRecyclerView() {
         RecyclerViewClickListener recyclerViewClickListener = new RecyclerViewClickListener() {
             @Override
             public void recyclerViewListClicked(View v, int position) {
@@ -76,7 +79,6 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
         };
         SongAdapter songAdapter = new SongAdapter(songsFiltered, recyclerViewClickListener);
         recyclerView.setAdapter(songAdapter);
-
     }
 
     private void sentBroadcast(int position) {
@@ -89,7 +91,6 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
         finish();
     }
 
-    // Вынести адаптер СЮДА
     private void setAdapters() {
         ArrayAdapter<String> authorsAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, authors);
@@ -144,20 +145,15 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
             }
         }
     }
-    // Сначала статики, потом ЖЦ, потом остальные оверрайды, потом приват
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         String itemSelectedInSpinner = (String) adapterView.getItemAtPosition(i);
-        int indexValue = adapterView.getSelectedItemPosition();
-//         как добавить все варианты, если они изменяются динамически?
-        // Ну например получить ключ и загрузать по ключу из базы через КонтентПровайдер
         switch (itemSelectedInSpinner) {
-            // Вынести в стринги
-            case "Молодежная":
+            case Utils.MOLOD:
                 fillRecycler("Молодежная", "genre");
                 chooseAuthorSpinner.setSelection(0);
                 break;
-            case "Танцевальная":
+            case Utils.TANCEV:
                 fillRecycler("Танцевальная", "genre");
                 chooseAuthorSpinner.setSelection(0);
                 break;

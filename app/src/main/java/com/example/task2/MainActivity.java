@@ -20,6 +20,7 @@ import com.example.task2.data.MyContentProvider;
 import com.example.task2.data.SongContract;
 import com.example.task2.data.SongsDbHelper;
 import com.example.task2.model.Song;
+import com.example.task2.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String SONG_AUTHOR = "author";
     public static final String SONG_GENRE = "genre";
     public static final String SONG_PATH = "path";
-    private static final String APP_PREFERENCES_PLAYED = "APP_PREFERENCES_PLAYED";
     private static final String APP_PREFERENCES = "APP_PREFERENCES";
     private static final String TAG = "MyApp";
 
@@ -43,9 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView authorTextView;
     private TextView genreTextView;
     private boolean isPlay;
-    private boolean restorePlay;
 
-    private SharedPreferences sharedPreferences;
     private List<Song> songs = new ArrayList<>();
     private BroadcastReceiver broadcastReceiver;
     private String songTitle;
@@ -66,12 +64,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         SongsDbHelper dbHelper = new SongsDbHelper(this);
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-        sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         init();
         setOnClickListener();
-        loadFromSharedPref();
-        // вынести рестор в отдельный метод
-        if (restorePlay) {
+        Utils.loadFromSharedPref(sharedPreferences);
+
+        if (isRestorePlay()) {
             restorePlayMusic();
             titleTextView.setText(songTitle);
             genreTextView.setText(songGenre);
@@ -82,6 +80,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initBroadcastReceiver();
     }
 
+    private Boolean isRestorePlay() {
+        return Utils.restorePlay;
+    }
     private void initBroadcastReceiver() {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 genreTextView.setText(songGenre);
                 stopService(new Intent(getApplicationContext(), MusicService.class));
                 isPlay = false;
-                restorePlay = false;
+                Utils.restorePlay = false;
             }
         };
     }
@@ -161,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case R.id.playButton:
                     if (!isPlay) {
                         // отдельный метод апдейтПлейМусик
-                        if (restorePlay) {
+                        if (Utils.restorePlay) {
                             resumePlayMusic();
                         } else {
                             startNewPlayMusic();
@@ -177,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d(TAG, "onClick: stop button");
                     stopService(new Intent(this, MusicService.class));
                     isPlay = false;
-                    restorePlay = false;
+                    Utils.restorePlay = false;
                     titleTextView.setText("Выберите песню");
                     authorTextView.setText("");
                     genreTextView.setText("");
@@ -195,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startService(new Intent(this, MusicService.class)
                 .setAction(MusicService.ACTION_PAUSE));
         isPlay = false;
-        restorePlay = true;
+        Utils.restorePlay = true;
     }
 
     private void startNewPlayMusic() {
@@ -210,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStop() {
         super.onStop();
         stopService(new Intent(this, MusicService.class));
-        saveToSharedPref();
+        Utils.saveToSharedPref(this);
         unregisterReceiver(broadcastReceiver);
     }
 
@@ -220,28 +221,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     // Можно вынести в Ютилс
-    private void saveToSharedPref() {
-        SharedPreferences sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(APP_PREFERENCES_PLAYED, isPlay);
-        editor.putString(SONG_TITLE, songTitle);
-        editor.putString(SONG_AUTHOR, songAuthor);
-        editor.putString(SONG_GENRE, songGenre);
-        editor.putString(SONG_PATH, songPath);
-        editor.apply();
-        Log.d(TAG, "saveToSharedPref main: = songTitle " + songTitle + ", " +
-                "songAuthor " + songAuthor);
-    }
+//    private void saveToSharedPref() {
+//        SharedPreferences sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        editor.putBoolean(APP_PREFERENCES_PLAYED, isPlay);
+//        editor.putString(SONG_TITLE, songTitle);
+//        editor.putString(SONG_AUTHOR, songAuthor);
+//        editor.putString(SONG_GENRE, songGenre);
+//        editor.putString(SONG_PATH, songPath);
+//        editor.apply();
+//        Log.d(TAG, "saveToSharedPref main: = songTitle " + songTitle + ", " +
+//                "songAuthor " + songAuthor);
+//    }
 
     // В Ютилс
-    private void loadFromSharedPref() {
-        restorePlay = sharedPreferences.getBoolean(APP_PREFERENCES_PLAYED, true);
-        songTitle = sharedPreferences.getString(SONG_TITLE, null);
-        songAuthor = sharedPreferences.getString(SONG_AUTHOR, null);
-        songGenre = sharedPreferences.getString(SONG_GENRE, null);
-        songPath = sharedPreferences.getString(SONG_PATH, null);
-        Log.d(TAG, "loadFromSharedPref main: wasPlayed = " + restorePlay + ", " +
-                "songTitle = " + songTitle + ", " +
-                "songAuthor = " + songAuthor);
-    }
+//    private void loadFromSharedPref() {
+//        restorePlay = sharedPreferences.getBoolean(APP_PREFERENCES_PLAYED, true);
+//        songTitle = sharedPreferences.getString(SONG_TITLE, null);
+//        songAuthor = sharedPreferences.getString(SONG_AUTHOR, null);
+//        songGenre = sharedPreferences.getString(SONG_GENRE, null);
+//        songPath = sharedPreferences.getString(SONG_PATH, null);
+//        Log.d(TAG, "loadFromSharedPref main: wasPlayed = " + restorePlay + ", " +
+//                "songTitle = " + songTitle + ", " +
+//                "songAuthor = " + songAuthor);
+//    }
 }

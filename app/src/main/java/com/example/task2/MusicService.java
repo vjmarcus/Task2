@@ -28,7 +28,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -47,7 +46,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         switch (Objects.requireNonNull(intent.getAction())) {
             case ACTION_PLAY:
                 Log.d(TAG, "onStartCommand: " + "ACTION_PLAY");
-                // URI SENT FROM MAIN ACTIVITY
                 Uri songUri = Uri.parse(intent.getStringExtra("song"));
                 Log.d(TAG, "onStartCommand: songUri = " + songUri.toString());
                 mediaPlayer = MediaPlayer.create(this, songUri);
@@ -70,7 +68,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                 mediaPlayer.start();
                 break;
         }
-        // Прочиттаь про Стики и нон Стики, флаги
         return START_STICKY;
     }
 
