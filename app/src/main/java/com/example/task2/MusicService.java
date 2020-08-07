@@ -34,11 +34,10 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void onCreate() {
         Uri uri;
         super.onCreate();
-        if (songPath == null) {
-            uri = Uri.parse("android.resource://" + getPackageName() + "/raw/elcapon");
-        } else {
-            uri = Uri.parse(songPath);
-        }
+
+        loadFromSharedPref();
+//            uri = Uri.parse("android.resource://" + getPackageName() + "/raw/elcapon");
+        uri = Uri.parse(songPath);
         mediaPlayer = MediaPlayer.create(this, uri);
         Log.d(TAG, "onCreate: URI = " + uri.toString());
         mediaPlayer.setLooping(false);
@@ -90,14 +89,14 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(APP_PREFERENCES_POSITION, position);
         editor.apply();
-        Log.d(TAG, "saveToSharedPref: = " + position);
+        Log.d(TAG, "saveToSharedPref service: = " + position);
     }
 
     private void loadFromSharedPref() {
         SharedPreferences sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         position = sharedPreferences.getInt(APP_PREFERENCES_POSITION, 0);
         songPath = sharedPreferences.getString(MainActivity.SONG_PATH, null);
-        Log.d(TAG, "loadFromSharedPref: = " + position);
+        Log.d(TAG, "loadFromSharedPref service: = " + position);
     }
 }
 

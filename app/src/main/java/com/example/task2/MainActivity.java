@@ -74,15 +74,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String title = intent.getStringExtra(SONG_TITLE);
-                String author = intent.getStringExtra(SONG_AUTHOR);
-                String genre = intent.getStringExtra(SONG_GENRE);
+                songTitle = intent.getStringExtra(SONG_TITLE);
+                songAuthor = intent.getStringExtra(SONG_AUTHOR);
+                songGenre = intent.getStringExtra(SONG_GENRE);
                 songPath = intent.getStringExtra(SONG_PATH);
-                Log.d(TAG, "onReceive: = " + title + ", "
-                        + author + ", " + genre + ", " + songPath);
-                titleTextView.setText(title);
-                authorTextView.setText(author);
-                genreTextView.setText(genre);
+                Log.d(TAG, "onReceive: = " + songTitle + ", "
+                        + songAuthor + ", " + songGenre + ", " + songPath);
+                titleTextView.setText(songTitle);
+                authorTextView.setText(songAuthor);
+                genreTextView.setText(songGenre);
                 stopService(new Intent(getApplicationContext(), MusicService.class));
                 isPlay = false;
             }
@@ -226,7 +226,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editor.putString(SONG_GENRE, songGenre);
         editor.putString(SONG_PATH, songPath);
         editor.apply();
-        Log.d(TAG, "saveToSharedPref main: = " + isPlay);
+        Log.d(TAG, "saveToSharedPref main: = songTitle " + songTitle + ", " +
+                "songAuthor " + songAuthor);
     }
 
     private void loadFromSharedPref() {
@@ -235,6 +236,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         songAuthor = sharedPreferences.getString(SONG_AUTHOR, null);
         songGenre = sharedPreferences.getString(SONG_GENRE, null);
         songPath = sharedPreferences.getString(SONG_PATH, null);
-        Log.d(TAG, "loadFromSharedPref: wasPlayed = " + wasPlayed);
+        Log.d(TAG, "loadFromSharedPref main: wasPlayed = " + wasPlayed + ", " +
+                "songTitle = " + songTitle + ", " +
+                "songAuthor = " + songAuthor);
     }
 }
