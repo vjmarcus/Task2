@@ -7,6 +7,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.task2.R;
+import com.example.task2.RecyclerViewClickListener;
 import com.example.task2.SecondActivity;
 import com.example.task2.model.Song;
 import java.util.List;
@@ -14,9 +15,10 @@ import java.util.List;
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> {
 
     private List<Song> songs;
-    private SecondActivity.RecyclerViewClickListener recyclerViewClickListener;
+    //убрать сенконд активитит из назыания
+    private RecyclerViewClickListener recyclerViewClickListener;
 
-    public SongAdapter(List<Song> songs, SecondActivity.RecyclerViewClickListener recyclerViewClickListener) {
+    public SongAdapter(List<Song> songs, RecyclerViewClickListener recyclerViewClickListener) {
         this.songs = songs;
         this.recyclerViewClickListener = recyclerViewClickListener;
     }

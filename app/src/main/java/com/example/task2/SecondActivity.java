@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.example.task2.adapter.SongAdapter;
 import com.example.task2.data.MyContentProvider;
@@ -26,22 +24,21 @@ import java.util.List;
 public class SecondActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "MyApp";
+    private static final String GENRE = "genre";
+    private static final String AUTHOR = "author";
     private Spinner chooseAuthorSpinner;
-    private RecyclerViewClickListener recyclerViewClickListener;
     private Spinner chooseGenreSpinner;
     private RecyclerView recyclerView;
     private List<Song> songs = new ArrayList<>();
     private List<Song> songsFiltered = new ArrayList<>();
     private List<String> authors = new ArrayList<>();
     private List<String> genres = new ArrayList<>();
-    private ArrayAdapter<String> authorsAdapter;
-    private String itemSelectedInSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
-        init();
+        initViews();
         loadFromContentResolverToSongsList();
         fillAuthorsFromSongs();
         fillGenresFromSongs();
@@ -54,14 +51,15 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
         songsFiltered.clear();
         Log.d(TAG, "fillRecycler: = " + filteredKey);
         switch (type) {
-            case "genre":
+            // в КОнстанты либо стрини
+            case GENRE:
                 for (int i = 0; i < songs.size(); i++) {
                     if (songs.get(i).getGenre().equals(filteredKey)) {
                         songsFiltered.add(songs.get(i));
                     }
                 }
                 break;
-            case "author":
+            case AUTHOR:
                 for (int i = 0; i < songs.size(); i++) {
                     if (songs.get(i).getAuthor().equals(filteredKey)) {
                         songsFiltered.add(songs.get(i));
@@ -69,14 +67,14 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
                 }
                 break;
         }
-        recyclerViewClickListener = new RecyclerViewClickListener() {
+        // Вынести к переменным или в отдельный метод
+        RecyclerViewClickListener recyclerViewClickListener = new RecyclerViewClickListener() {
             @Override
             public void recyclerViewListClicked(View v, int position) {
-               sentBroadcast(position);
+                sentBroadcast(position);
             }
         };
         SongAdapter songAdapter = new SongAdapter(songsFiltered, recyclerViewClickListener);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(songAdapter);
 
     }
@@ -91,14 +89,9 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
         finish();
     }
 
-    private void printList(List list) {
-        for (int i = 0; i < list.size(); i++) {
-            Log.d(TAG, "printList: = " + list.get(i).toString());
-        }
-    }
-
+    // Вынести адаптер СЮДА
     private void setAdapters() {
-        authorsAdapter = new ArrayAdapter<>(this,
+        ArrayAdapter<String> authorsAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, authors);
         authorsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         chooseAuthorSpinner.setAdapter(authorsAdapter);
@@ -108,7 +101,7 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
         chooseGenreSpinner.setAdapter(genresAdapter);
     }
 
-    private void init() {
+    private void initViews() {
         chooseAuthorSpinner = findViewById(R.id.spinner_choose_author);
         chooseGenreSpinner = findViewById(R.id.spinner_choose_genre);
         recyclerView = findViewById(R.id.recycler);
@@ -122,12 +115,13 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
                 null,
                 null);
         Log.d(TAG, "SecondActivity loadFromContentResolver:");
+        assert cursor != null;
         while (cursor.moveToNext()) {
-            int id = cursor.getInt(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_ID));
-            String title = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_TITLE));
-            String author = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_AUTHOR));
-            String genre = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_GENRE));
-            String path = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_PATH_TO_FILE));
+            int id = cursor.getInt(cursor.getColumnIndex(SongContract.COLUMN_ID));
+            String title = cursor.getString(cursor.getColumnIndex(SongContract.COLUMN_TITLE));
+            String author = cursor.getString(cursor.getColumnIndex(SongContract.COLUMN_AUTHOR));
+            String genre = cursor.getString(cursor.getColumnIndex(SongContract.COLUMN_GENRE));
+            String path = cursor.getString(cursor.getColumnIndex(SongContract.COLUMN_PATH_TO_FILE));
             Song song = new Song(id, title, author, genre, path);
             songs.add(song);
             Log.d(TAG, "SecondActivity loadFromContentResolver ->: " + song.toString());
@@ -150,14 +144,15 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
             }
         }
     }
-
+    // Сначала статики, потом ЖЦ, потом остальные оверрайды, потом приват
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        itemSelectedInSpinner = (String) adapterView.getItemAtPosition(i);
+        String itemSelectedInSpinner = (String) adapterView.getItemAtPosition(i);
         int indexValue = adapterView.getSelectedItemPosition();
 //         как добавить все варианты, если они изменяются динамически?
         // Ну например получить ключ и загрузать по ключу из базы через КонтентПровайдер
         switch (itemSelectedInSpinner) {
+            // Вынести в стринги
             case "Молодежная":
                 fillRecycler("Молодежная", "genre");
                 chooseAuthorSpinner.setSelection(0);
@@ -166,14 +161,6 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
                 fillRecycler("Танцевальная", "genre");
                 chooseAuthorSpinner.setSelection(0);
                 break;
-//            case "Raim":
-//                fillRecycler("Raim", "author");
-//                chooseGenreSpinner.setSelection(0);
-//                break;
-//            case "Black Eyed Peas":
-//                fillRecycler("Black Eyed Peas", "author");
-//                chooseGenreSpinner.setSelection(0);
-//                break;
             default: fillRecycler(itemSelectedInSpinner, "author");
         }
     }
@@ -181,8 +168,5 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
         //do nothing
-    }
-    public interface RecyclerViewClickListener {
-        public void recyclerViewListClicked(View v, int position);
     }
 }

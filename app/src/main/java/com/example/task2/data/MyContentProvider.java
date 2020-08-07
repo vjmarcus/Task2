@@ -8,17 +8,17 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 public class MyContentProvider extends ContentProvider {
 
+    public static final String AUTHORITY = "com.example.task2.data";
+    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/songs");
     private static final String TAG = "MyApp";
-    private SongsDbHelper songsDbHelper;
     private static final int SINGLE_SONG = 1;
     private static final int ALL_SONGS = 2;
-    private static final String AUTHORITY = "com.example.task2.data";
-    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/songs");
-    public static final Uri CONTENT_URI_SINGLE = Uri.parse("content://" + AUTHORITY + "/songs/#");
-    static final UriMatcher uriMatcher;
+    private static final UriMatcher uriMatcher;
+    private SongsDbHelper songsDbHelper;
 
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -38,7 +38,6 @@ public class MyContentProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         // DO NOTHING
-        // at the given URI.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -59,7 +58,7 @@ public class MyContentProvider extends ContentProvider {
                         String[] selectionArgs, String sortOrder) {
         SQLiteDatabase database = songsDbHelper.getWritableDatabase();
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-        queryBuilder.setTables(SongContract.SongsEntry.TABLE_NAME);
+        queryBuilder.setTables(SongContract.TABLE_NAME);
         switch (uriMatcher.match(uri)) {
             case ALL_SONGS:
                 Log.d(TAG, "query: ALL SONGS ");
@@ -68,11 +67,10 @@ public class MyContentProvider extends ContentProvider {
                 Log.d(TAG, "query: SINGLE_SONG");
                 break;
             default:
-                throw new UnsupportedOperationException("Not yet implemented");
+                Toast.makeText(getContext(), "ERROR uriMather", Toast.LENGTH_SHORT).show();
         }
-        Cursor cursor = queryBuilder.query(database, projection, selection,
+        return queryBuilder.query(database, projection, selection,
                 selectionArgs, null, null, sortOrder);
-        return cursor;
     }
 
     @Override

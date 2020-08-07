@@ -67,7 +67,6 @@
         android:id="@+id/genreTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:layout_marginBottom="16dp"
         android:text="@string/genre"
         android:textSize="@dimen/text_size"
@@ -79,7 +78,7 @@
         android:id="@+id/chooseAuthorButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_margin="@dimen/margin"
         android:text="@string/choose_author"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

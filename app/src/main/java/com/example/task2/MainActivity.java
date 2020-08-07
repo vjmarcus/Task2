@@ -26,14 +26,15 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG = "MyApp";
-    private static final String APP_PREFERENCES_PLAYED = "APP_PREFERENCES_PLAYED";
-    private static final String APP_PREFERENCES = "APP_PREFERENCES";
     public static final String BROADCAST_ACTION = "com.example.task2.broadcast";
     public static final String SONG_TITLE = "title";
     public static final String SONG_AUTHOR = "author";
     public static final String SONG_GENRE = "genre";
     public static final String SONG_PATH = "path";
+    private static final String APP_PREFERENCES_PLAYED = "APP_PREFERENCES_PLAYED";
+    private static final String APP_PREFERENCES = "APP_PREFERENCES";
+    private static final String TAG = "MyApp";
+
     private Button playButton;
     private Button pauseButton;
     private Button stopButton;
@@ -43,10 +44,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView genreTextView;
     private boolean isPlay;
     private boolean restorePlay;
+
     private SharedPreferences sharedPreferences;
-    private SongsDbHelper dbHelper;
     private List<Song> songs = new ArrayList<>();
-    private SQLiteDatabase database;
     private BroadcastReceiver broadcastReceiver;
     private String songTitle;
     private String songAuthor;
@@ -54,22 +54,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String songPath;
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter(BROADCAST_ACTION);
+        registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        dbHelper = new SongsDbHelper(this);
-        database = dbHelper.getWritableDatabase();
+        SongsDbHelper dbHelper = new SongsDbHelper(this);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
         sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         init();
         setOnClickListener();
         loadFromSharedPref();
+        // вынести рестор в отдельный метод
         if (restorePlay) {
             restorePlayMusic();
             titleTextView.setText(songTitle);
             genreTextView.setText(songGenre);
             authorTextView.setText(songAuthor);
         }
+
         loadFromContentResolver();
+        initBroadcastReceiver();
+    }
+
+    private void initBroadcastReceiver() {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -84,32 +97,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 genreTextView.setText(songGenre);
                 stopService(new Intent(getApplicationContext(), MusicService.class));
                 isPlay = false;
+                restorePlay = false;
             }
         };
-        IntentFilter intentFilter = new IntentFilter(BROADCAST_ACTION);
-        registerReceiver(broadcastReceiver, intentFilter);
     }
-
-//        addSongToDb(song = new Song("Двигаться", "Raim", "Молодежная",
-//                Uri.parse("android.resource://" + getPackageName() + "/raw/raim").toString()));
-//        addSongToDb(song = new Song("MAMACITA", "Black Eyed Peas", "Танцевальная",
-//                Uri.parse("android.resource://" + getPackageName() + "/raw/mamasita").toString()));
-//        addSongToDb(song = new Song("HYPNODANCER", "LITTLE BIG - HYPNODANCER", "Танцевальная",
-//                Uri.parse("android.resource://" + getPackageName() + "/raw/littlebig").toString()));
-//        addSongToDb(song = new Song("Lovefool", "twocolors", "Танцевальная",
-//                Uri.parse("android.resource://" + getPackageName() + "/raw/twocolors").toString()));
-//        addSongToDb(song = new Song("El Capon", "El Capon", "Танцевальная",
-//                Uri.parse("android.resource://" + getPackageName() + "/raw/elcapon").toString()));
-//        addSongToDb(song = new Song("Relax", "Junona Boys", "Танцевальная",
-//                Uri.parse("android.resource://" + getPackageName() + "/raw/junonaboys").toString()));
-//        addSongToDb(song = new Song("Fly 2", ". Zivert x NILETTO", "Молодежная",
-//                Uri.parse("android.resource://" + getPackageName() + "/raw/zivert").toString()));
-//        addSongToDb(song = new Song("Topic A7S", "Breaking Me ft. A7", "Молодежная",
-//                Uri.parse("android.resource://" + getPackageName() + "/raw/topic").toString()));
-//        addSongToDb(song = new Song("Луна не знает пути", "ТАЙПАН & Agunda", "Молодежная",
-//                Uri.parse("android.resource://" + getPackageName() + "/raw/taypan_gunda").toString()));
-//        addSongToDb(song = new Song("Dynoro & Fumaratto", "Me Provocas", "Танцевальная",
-//                Uri.parse("android.resource://" + getPackageName() + "/raw/dynoro").toString()));
 
     private void loadFromContentResolver() {
         Cursor cursor = getContentResolver().query(
@@ -119,14 +110,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 null,
                 null);
         while (cursor.moveToNext()) {
-            int id = cursor.getInt(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_ID));
-            songTitle = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_TITLE));
-            songAuthor = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_AUTHOR));
-            songGenre = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_GENRE));
-            songPath = cursor.getString(cursor.getColumnIndex(SongContract.SongsEntry.COLUMN_PATH_TO_FILE));
+            int id = cursor.getInt(cursor.getColumnIndex(SongContract.COLUMN_ID));
+            songTitle = cursor.getString(cursor.getColumnIndex(SongContract.COLUMN_TITLE));
+            songAuthor = cursor.getString(cursor.getColumnIndex(SongContract.COLUMN_AUTHOR));
+            songGenre = cursor.getString(cursor.getColumnIndex(SongContract.COLUMN_GENRE));
+            songPath = cursor.getString(cursor.getColumnIndex(SongContract.COLUMN_PATH_TO_FILE));
             Song song = new Song(id, songTitle, songAuthor, songGenre, songPath);
             songs.add(song);
-//            Log.d(TAG, "loadFromContentResolver!!!: " + song.toString());
         }
     }
 
@@ -136,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setAction(MusicService.ACTION_RESUME));
         isPlay = true;
     }
+
     private void restorePlayMusic() {
         Log.d(TAG, "onClick: pause button");
         startService(new Intent(this, MusicService.class)
@@ -169,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             switch (view.getId()) {
                 case R.id.playButton:
                     if (!isPlay) {
+                        // отдельный метод апдейтПлейМусик
                         if (restorePlay) {
                             resumePlayMusic();
                         } else {
@@ -215,13 +207,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
         stopService(new Intent(this, MusicService.class));
         saveToSharedPref();
         unregisterReceiver(broadcastReceiver);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    // Можно вынести в Ютилс
     private void saveToSharedPref() {
         SharedPreferences sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -235,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 "songAuthor " + songAuthor);
     }
 
+    // В Ютилс
     private void loadFromSharedPref() {
         restorePlay = sharedPreferences.getBoolean(APP_PREFERENCES_PLAYED, true);
         songTitle = sharedPreferences.getString(SONG_TITLE, null);

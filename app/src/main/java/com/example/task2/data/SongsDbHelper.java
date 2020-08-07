@@ -15,12 +15,12 @@ public class SongsDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(SongContract.SongsEntry.CREATE_COMMAND);
+        sqLiteDatabase.execSQL(SongContract.CREATE_COMMAND);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL(SongContract.SongsEntry.DROP_COMMAND);
+        sqLiteDatabase.execSQL(SongContract.DROP_COMMAND);
         onCreate(sqLiteDatabase);
     }
 }

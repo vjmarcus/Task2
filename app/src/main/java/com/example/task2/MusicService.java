@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.util.Objects;
+
 public class MusicService extends Service implements MediaPlayer.OnPreparedListener {
     public static final String ACTION_PLAY = "com.example.action.PLAY";
     public static final String ACTION_PAUSE = "com.example.action.PAUSE";
@@ -32,12 +34,9 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public void onCreate() {
-        Uri uri;
         super.onCreate();
-
         loadFromSharedPref();
-//            uri = Uri.parse("android.resource://" + getPackageName() + "/raw/elcapon");
-        uri = Uri.parse(songPath);
+        Uri uri = Uri.parse(songPath);
         mediaPlayer = MediaPlayer.create(this, uri);
         Log.d(TAG, "onCreate: URI = " + uri.toString());
         mediaPlayer.setLooping(false);
@@ -45,29 +44,33 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getAction().equals(ACTION_PLAY)) {
-            Log.d(TAG, "onStartCommand: " + "ACTION_PLAY");
-            // URI SENT FROM MAIN ACTIVITY
-            Uri songUri = Uri.parse(intent.getStringExtra("song"));
-            Log.d(TAG, "onStartCommand: songUri = " + songUri.toString());
-            mediaPlayer = MediaPlayer.create(this, songUri);
-            mediaPlayer.seekTo(0);
-            mediaPlayer.start();
-        } else if (intent.getAction().equals(ACTION_PAUSE)) {
-            Log.d(TAG, "onStartCommand: " + "ACTION_PAUSE");
-            mediaPlayer.pause();
-            position = mediaPlayer.getCurrentPosition();
-        } else if (intent.getAction().equals(ACTION_RESUME)) {
-            Log.d(TAG, "onStartCommand: " + "ACTION_RESUME");
-//            loadFromSharedPref();
-////            mediaPlayer.seekTo(position);
-            mediaPlayer.start();
-        } else if (intent.getAction().equals(ACTION_RESTORE)) {
-            Log.d(TAG, "onStartCommand: " + "ACTION_RESTORE");
-            loadFromSharedPref();
-            mediaPlayer.seekTo(position);
-            mediaPlayer.start();
+        switch (Objects.requireNonNull(intent.getAction())) {
+            case ACTION_PLAY:
+                Log.d(TAG, "onStartCommand: " + "ACTION_PLAY");
+                // URI SENT FROM MAIN ACTIVITY
+                Uri songUri = Uri.parse(intent.getStringExtra("song"));
+                Log.d(TAG, "onStartCommand: songUri = " + songUri.toString());
+                mediaPlayer = MediaPlayer.create(this, songUri);
+                mediaPlayer.seekTo(0);
+                mediaPlayer.start();
+                break;
+            case ACTION_PAUSE:
+                Log.d(TAG, "onStartCommand: " + "ACTION_PAUSE");
+                mediaPlayer.pause();
+                position = mediaPlayer.getCurrentPosition();
+                break;
+            case ACTION_RESUME:
+                Log.d(TAG, "onStartCommand: " + "ACTION_RESUME");
+                mediaPlayer.start();
+                break;
+            case ACTION_RESTORE:
+                Log.d(TAG, "onStartCommand: " + "ACTION_RESTORE");
+                loadFromSharedPref();
+                mediaPlayer.seekTo(position);
+                mediaPlayer.start();
+                break;
         }
+        // Прочиттаь про Стики и нон Стики, флаги
         return START_STICKY;
     }
 
