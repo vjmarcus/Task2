@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.example.task2.MainActivity;
+
 public class Utils {
     public static final String SONG_TITLE = "title";
     public static final String SONG_AUTHOR = "author";
@@ -11,14 +13,18 @@ public class Utils {
     public static final String SONG_PATH = "path";
     public static final String MOLOD = "Молодежная";
     public static final String TANCEV = "Танцевальная";
+    public static final String APP_PREFERENCES_PLAYED = "APP_PREFERENCES_PLAYED";
+    public static final String APP_PREFERENCES = "APP_PREFERENCES";
+    public static final String APP_PREFERENCES_POSITION = "APP_PREFERENCES_POSITION";
     public static String songTitle;
     public static String songAuthor;
     public static String songGenre;
     public static String songPath;
+    public static int position;
     public static boolean isPlay;
     public static boolean restorePlay;
-    public static final String APP_PREFERENCES_PLAYED = "APP_PREFERENCES_PLAYED";
-    public static final String APP_PREFERENCES = "APP_PREFERENCES";
+
+
 
     public static void saveToSharedPref(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
@@ -37,4 +43,14 @@ public class Utils {
             songGenre = sharedPreferences.getString(SONG_GENRE, null);
             songPath = sharedPreferences.getString(SONG_PATH, null);
     }
-}
+    public static void saveToSharedPrefFromService(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(APP_PREFERENCES_POSITION, position);
+        editor.apply();
+    }
+    public static void loadToSharePrefFromService(SharedPreferences sharedPreferences){
+            Utils.position = sharedPreferences.getInt(APP_PREFERENCES_POSITION, 0);
+            songPath = sharedPreferences.getString(MainActivity.SONG_PATH, null);
+        }
+    }

@@ -87,6 +87,7 @@ public class SecondActivity extends AppCompatActivity implements AdapterView.OnI
         intent.putExtra(MainActivity.SONG_AUTHOR, songsFiltered.get(position).getAuthor());
         intent.putExtra(MainActivity.SONG_GENRE, songsFiltered.get(position).getGenre());
         intent.putExtra(MainActivity.SONG_PATH, songsFiltered.get(position).getPathToFile());
+        Log.d(TAG, "sentBroadcast: " + songsFiltered.get(position).getTitle());
         sendBroadcast(intent);
         finish();
     }

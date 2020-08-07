@@ -54,8 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStart() {
         super.onStart();
-        IntentFilter intentFilter = new IntentFilter(BROADCAST_ACTION);
-        registerReceiver(broadcastReceiver, intentFilter);
+//        initBroadcastReceiver();
     }
 
     @Override
@@ -83,10 +82,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Boolean isRestorePlay() {
         return Utils.restorePlay;
     }
+
     private void initBroadcastReceiver() {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                Toast.makeText(context, "HI", Toast.LENGTH_SHORT).show();
                 songTitle = intent.getStringExtra(SONG_TITLE);
                 songAuthor = intent.getStringExtra(SONG_AUTHOR);
                 songGenre = intent.getStringExtra(SONG_GENRE);
@@ -101,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Utils.restorePlay = false;
             }
         };
+        IntentFilter intentFilter = new IntentFilter(BROADCAST_ACTION);
+        registerReceiver(broadcastReceiver, intentFilter);
     }
 
     private void loadFromContentResolver() {
@@ -212,37 +215,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onStop();
         stopService(new Intent(this, MusicService.class));
         Utils.saveToSharedPref(this);
-        unregisterReceiver(broadcastReceiver);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
+
     }
-
-    // Можно вынести в Ютилс
-//    private void saveToSharedPref() {
-//        SharedPreferences sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        editor.putBoolean(APP_PREFERENCES_PLAYED, isPlay);
-//        editor.putString(SONG_TITLE, songTitle);
-//        editor.putString(SONG_AUTHOR, songAuthor);
-//        editor.putString(SONG_GENRE, songGenre);
-//        editor.putString(SONG_PATH, songPath);
-//        editor.apply();
-//        Log.d(TAG, "saveToSharedPref main: = songTitle " + songTitle + ", " +
-//                "songAuthor " + songAuthor);
-//    }
-
-    // В Ютилс
-//    private void loadFromSharedPref() {
-//        restorePlay = sharedPreferences.getBoolean(APP_PREFERENCES_PLAYED, true);
-//        songTitle = sharedPreferences.getString(SONG_TITLE, null);
-//        songAuthor = sharedPreferences.getString(SONG_AUTHOR, null);
-//        songGenre = sharedPreferences.getString(SONG_GENRE, null);
-//        songPath = sharedPreferences.getString(SONG_PATH, null);
-//        Log.d(TAG, "loadFromSharedPref main: wasPlayed = " + restorePlay + ", " +
-//                "songTitle = " + songTitle + ", " +
-//                "songAuthor = " + songAuthor);
-//    }
 }

@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.example.task2.util.Utils;
+
 import java.util.Objects;
 
 public class MusicService extends Service implements MediaPlayer.OnPreparedListener {
@@ -17,11 +19,10 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public static final String ACTION_RESUME = "com.example.action.RESUME";
     public static final String ACTION_RESTORE = "com.example.action.RESTORE";
     public static final String APP_PREFERENCES = "APP_PREFERENCES";
-    public static final String APP_PREFERENCES_POSITION = "APP_PREFERENCES_POSITION";
     public static final String TAG = "MyApp";
     private MediaPlayer mediaPlayer = null;
-    private int position = 0;
     private String songPath;
+    private SharedPreferences sharedPreferences;
 
     public MusicService() {
     }
@@ -34,8 +35,9 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public void onCreate() {
         super.onCreate();
-        loadFromSharedPref();
-        Uri uri = Uri.parse(songPath);
+        SharedPreferences sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        Utils.loadToSharePrefFromService(sharedPreferences);
+        Uri uri = Uri.parse(Utils.songPath);
         mediaPlayer = MediaPlayer.create(this, uri);
         Log.d(TAG, "onCreate: URI = " + uri.toString());
         mediaPlayer.setLooping(false);
@@ -55,7 +57,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
             case ACTION_PAUSE:
                 Log.d(TAG, "onStartCommand: " + "ACTION_PAUSE");
                 mediaPlayer.pause();
-                position = mediaPlayer.getCurrentPosition();
+                Utils.position = mediaPlayer.getCurrentPosition();
                 break;
             case ACTION_RESUME:
                 Log.d(TAG, "onStartCommand: " + "ACTION_RESUME");
@@ -63,8 +65,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                 break;
             case ACTION_RESTORE:
                 Log.d(TAG, "onStartCommand: " + "ACTION_RESTORE");
-                loadFromSharedPref();
-                mediaPlayer.seekTo(position);
+                Utils.loadToSharePrefFromService(sharedPreferences);
+                mediaPlayer.seekTo(Utils.position);
                 mediaPlayer.start();
                 break;
         }
@@ -75,28 +77,13 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void onDestroy() {
         if (mediaPlayer != null) mediaPlayer.stop();
         Log.d(TAG, "onDestroy: stop");
-        position = mediaPlayer.getCurrentPosition();
-        saveToSharedPref();
+        Utils.position = mediaPlayer.getCurrentPosition();
+        Utils.saveToSharedPref(getApplicationContext());
     }
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
         mediaPlayer.start();
-    }
-
-    private void saveToSharedPref() {
-        SharedPreferences sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(APP_PREFERENCES_POSITION, position);
-        editor.apply();
-        Log.d(TAG, "saveToSharedPref service: = " + position);
-    }
-
-    private void loadFromSharedPref() {
-        SharedPreferences sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        position = sharedPreferences.getInt(APP_PREFERENCES_POSITION, 0);
-        songPath = sharedPreferences.getString(MainActivity.SONG_PATH, null);
-        Log.d(TAG, "loadFromSharedPref service: = " + position);
     }
 }
 
