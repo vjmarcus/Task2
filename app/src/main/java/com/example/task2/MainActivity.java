@@ -3,7 +3,6 @@ package com.example.task2;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -43,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView authorTextView;
     private TextView genreTextView;
     private boolean isPlay;
-    private boolean wasPlayed;
+    private boolean restorePlay;
     private SharedPreferences sharedPreferences;
     private SongsDbHelper dbHelper;
     private List<Song> songs = new ArrayList<>();
@@ -64,8 +63,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         init();
         setOnClickListener();
         loadFromSharedPref();
-        if (wasPlayed) {
-            resumePlayMusic();
+        if (restorePlay) {
+            restorePlayMusic();
             titleTextView.setText(songTitle);
             genreTextView.setText(songGenre);
             authorTextView.setText(songAuthor);
@@ -137,6 +136,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setAction(MusicService.ACTION_RESUME));
         isPlay = true;
     }
+    private void restorePlayMusic() {
+        Log.d(TAG, "onClick: pause button");
+        startService(new Intent(this, MusicService.class)
+                .setAction(MusicService.ACTION_RESTORE));
+        isPlay = true;
+    }
 
     private void setOnClickListener() {
         playButton.setOnClickListener(this);
@@ -164,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             switch (view.getId()) {
                 case R.id.playButton:
                     if (!isPlay) {
-                        if (wasPlayed) {
+                        if (restorePlay) {
                             resumePlayMusic();
                         } else {
                             startNewPlayMusic();
@@ -180,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d(TAG, "onClick: stop button");
                     stopService(new Intent(this, MusicService.class));
                     isPlay = false;
-                    wasPlayed = false;
+                    restorePlay = false;
                     titleTextView.setText("Выберите песню");
                     authorTextView.setText("");
                     genreTextView.setText("");
@@ -198,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startService(new Intent(this, MusicService.class)
                 .setAction(MusicService.ACTION_PAUSE));
         isPlay = false;
-        wasPlayed = true;
+        restorePlay = true;
     }
 
     private void startNewPlayMusic() {
@@ -231,12 +236,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void loadFromSharedPref() {
-        wasPlayed = sharedPreferences.getBoolean(APP_PREFERENCES_PLAYED, true);
+        restorePlay = sharedPreferences.getBoolean(APP_PREFERENCES_PLAYED, true);
         songTitle = sharedPreferences.getString(SONG_TITLE, null);
         songAuthor = sharedPreferences.getString(SONG_AUTHOR, null);
         songGenre = sharedPreferences.getString(SONG_GENRE, null);
         songPath = sharedPreferences.getString(SONG_PATH, null);
-        Log.d(TAG, "loadFromSharedPref main: wasPlayed = " + wasPlayed + ", " +
+        Log.d(TAG, "loadFromSharedPref main: wasPlayed = " + restorePlay + ", " +
                 "songTitle = " + songTitle + ", " +
                 "songAuthor = " + songAuthor);
     }
