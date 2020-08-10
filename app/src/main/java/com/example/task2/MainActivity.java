@@ -2,6 +2,8 @@ package com.example.task2;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -87,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Toast.makeText(context, "HI", Toast.LENGTH_SHORT).show();
                 songTitle = intent.getStringExtra(SONG_TITLE);
                 songAuthor = intent.getStringExtra(SONG_AUTHOR);
                 songGenre = intent.getStringExtra(SONG_GENRE);
@@ -126,14 +127,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void resumePlayMusic() {
         Log.d(TAG, "onClick: pause button");
-        startService(new Intent(this, MusicService.class)
+        startForegroundService(new Intent(this, MusicService.class)
                 .setAction(MusicService.ACTION_RESUME));
         isPlay = true;
     }
 
     private void restorePlayMusic() {
         Log.d(TAG, "onClick: pause button");
-        startService(new Intent(this, MusicService.class)
+        startForegroundService(new Intent(this, MusicService.class)
                 .setAction(MusicService.ACTION_RESTORE));
         isPlay = true;
     }
@@ -164,12 +165,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             switch (view.getId()) {
                 case R.id.playButton:
                     if (!isPlay) {
-                        // отдельный метод апдейтПлейМусик
-                        if (Utils.restorePlay) {
-                            resumePlayMusic();
-                        } else {
-                            startNewPlayMusic();
-                        }
+                        updatePlayMusic();
                     }
                     break;
                 case R.id.pauseButton:
@@ -179,12 +175,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.stopButton:
                     Log.d(TAG, "onClick: stop button");
-                    stopService(new Intent(this, MusicService.class));
                     isPlay = false;
                     Utils.restorePlay = false;
                     titleTextView.setText("Выберите песню");
                     authorTextView.setText("");
                     genreTextView.setText("");
+                    startForegroundService(new Intent(this, MusicService.class)
+                            .setAction(MusicService.ACTION_STOP));
                     break;
                 case R.id.chooseAuthorButton:
                     Log.d(TAG, "onClick: choose author button");
@@ -194,9 +191,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void updatePlayMusic() {
+        if (Utils.restorePlay) {
+            resumePlayMusic();
+        } else {
+            startNewPlayMusic();
+        }
+    }
+
     private void pausePlayMusic() {
         Log.d(TAG, "onClick: pause button");
-        startService(new Intent(this, MusicService.class)
+        startForegroundService(new Intent(this, MusicService.class)
                 .setAction(MusicService.ACTION_PAUSE));
         isPlay = false;
         Utils.restorePlay = true;
@@ -204,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void startNewPlayMusic() {
         Log.d(TAG, "onClick: play button");
-        startService(new Intent(this, MusicService.class)
+        startForegroundService(new Intent(this, MusicService.class)
                 .setAction(MusicService.ACTION_PLAY).putExtra("song",
                         songPath));
         isPlay = true;
